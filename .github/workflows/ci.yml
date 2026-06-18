@@ -165,3 +165,37 @@ jobs:
             demo/animations/media/workflow_montage.mp4
             demo/animations/media/videos/workflow_pipeline_ch*/1080p60/*.mp4
           if-no-files-found: error
+
+  # ===================================================================
+  # Job 3 — Déploiement : publie les livrables (APK + montage vidéo) en
+  #         GitHub Release roulante « latest ». Sur push main uniquement.
+  # `upload-artifact` plus haut ne fait que des artefacts de run (éphémères,
+  # sous l'onglet Actions) — c'est CE job qui « déploie » réellement.
+  # ===================================================================
+  deploy:
+    name: Déployer la Release (latest)
+    needs: [android, videos]            # attend que l'APK ET les vidéos soient publiés
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write                   # requis : créer/mettre à jour la Release + déplacer le tag
+    steps:
+      # Récupère les artefacts produits par les jobs android + videos de CE run.
+      # Sans `name`, chaque artefact atterrit dans dist/<nom-artefact>/.
+      - name: Récupérer les artefacts (APK + vidéos)
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      # Crée la release `latest` au 1er passage, la met à jour ensuite (déplace
+      # le tag sur le commit courant et remplace les assets). GITHUB_TOKEN suffit.
+      - name: Publier / mettre à jour la Release « latest »
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Dernière build (main)
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: |
+            dist/app-debug-apk/*.apk
+            dist/videos/workflow_montage.mp4
