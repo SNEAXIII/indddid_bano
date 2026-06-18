@@ -135,17 +135,17 @@ class Ch7Fst(Scene):
             for (a, b, letter, off) in EDGES
         }
         self.word_labels = {
-            "rue": Text("rue", font=MONO, font_size=20, color=COL_TOK)
-            .next_to(self.nodes["C"], UP, buff=0.34)
-            .shift(LEFT * 0.3),
+            "rue": Text("rue", font=MONO, font_size=20, color=COL_TOK).next_to(
+                self.nodes["C"], RIGHT, buff=0.28
+            ),
             "ruelle": Text("ruelle", font=MONO, font_size=20, color=COL_TOK).next_to(
-                self.nodes["F"], UP, buff=0.22
+                self.nodes["F"], RIGHT, buff=0.28
             ),
             "ruette": Text("ruette", font=MONO, font_size=20, color=COL_TOK).next_to(
-                self.nodes["I"], RIGHT, buff=0.25
+                self.nodes["I"], RIGHT, buff=0.28
             ),
             "remy": Text("remy", font=MONO, font_size=20, color=COL_TOK).next_to(
-                self.nodes["L"], DOWN, buff=0.22
+                self.nodes["L"], RIGHT, buff=0.28
             ),
         }
 
@@ -175,12 +175,20 @@ class Ch7Fst(Scene):
         self.wait(0.5)
 
         # Le partage : « r-u-e » écrit UNE fois, sert à rue, ruelle ET ruette.
+        # On entoure les BULLES r-u-e (S→C) en plus des arêtes, sinon l'état
+        # final « rue » (C) déborde à droite du cadre.
         shared = SurroundingRectangle(
             VGroup(
-                self.edges[("S", "A")], self.edges[("A", "B")], self.edges[("B", "C")]
+                self.nodes["S"],
+                self.nodes["A"],
+                self.nodes["B"],
+                self.nodes["C"],
+                self.edges[("S", "A")],
+                self.edges[("A", "B")],
+                self.edges[("B", "C")],
             ),
             color=COL_SRC,
-            buff=0.12,
+            buff=0.26,
         )
         cap = Text(
             "« rue » : écrit une seule fois, partagé par 3 mots",
