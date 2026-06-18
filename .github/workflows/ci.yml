@@ -2,7 +2,7 @@ name: CI
 
 # Deux jobs INDÉPENDANTS qui tournent en parallèle :
 #   - android : build de l'APK debug (Rust + index + Gradle)
-#   - videos  : rendu des 8 chapitres Manim + montage continu
+#   - videos  : rendu des 11 chapitres Manim + montage continu
 # Chacun publie son artefact de run (APK / zip de vidéos). Pas de Release.
 
 on:
@@ -142,22 +142,20 @@ jobs:
       # pas re-rendue (cache natif, hash par animation). On persiste donc le
       # dossier de rendu entre runs. La clé inclut le hash du code anim + uv.lock
       # (version de Manim) ; restore-keys permet une réutilisation partielle
-      # (Manim ne re-rend que les anims dont le hash a bougé).
+      # (Manim ne re-rend que les anims dont le hash a bougé). Chaque chapitre est
+      # un module workflow_pipeline_ch<N>.py rendu sous son propre dossier média :
+      # on cache donc tout media/videos.
       - name: Cache rendus Manim (partial movie files)
         uses: actions/cache@v4
         with:
-          path: demo/animations/media/videos/workflow_pipeline
-          key: manim-${{ runner.os }}-${{ hashFiles('demo/animations/workflow_pipeline.py', 'demo/animations/anim_common.py', 'demo/animations/uv.lock') }}
+          path: demo/animations/media/videos
+          key: manim-${{ runner.os }}-${{ hashFiles('demo/animations/workflow_pipeline_ch*.py', 'demo/animations/workflow_pipeline_shared.py', 'demo/animations/anim_common.py', 'demo/animations/uv.lock') }}
           restore-keys: |
             manim-${{ runner.os }}-
 
-      - name: Rendre les 8 chapitres (1080p60)
-        working-directory: demo/animations
-        run: uv run manim -qh -a workflow_pipeline.py
 
-      - name: Monter le film continu
-        working-directory: demo/animations
-        run: uv run python concat_chapters.py 1080p60
+      - name: Rendre 1080p60
+        run: make anim-workflow-montage QUALITY=h
 
       - name: Publier les vidéos (montage + chapitres)
         uses: actions/upload-artifact@v4
@@ -165,5 +163,5 @@ jobs:
           name: videos
           path: |
             demo/animations/media/workflow_montage.mp4
-            demo/animations/media/videos/workflow_pipeline/1080p60/*.mp4
+            demo/animations/media/videos/workflow_pipeline_ch*/1080p60/*.mp4
           if-no-files-found: error
