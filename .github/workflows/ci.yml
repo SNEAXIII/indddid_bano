@@ -193,7 +193,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: Dernière build (main)
+          name: Latest (main)
           prerelease: false
           fail_on_unmatched_files: true
           files: |
