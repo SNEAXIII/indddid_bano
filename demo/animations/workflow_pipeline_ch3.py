@@ -1,26 +1,26 @@
-"""Chapitre 3 du workflow BANO : extraction de streets.csv."""
+"""Chapitre 3 du workflow BANO : normalisation."""
 
-from workflow_pipeline_shared import ADDR1, ADDR2, COL_DROP, COL_SRC, COL_TOK, COLS_X
+from workflow_pipeline_shared import COL_SRC, COL_TOK, COL_DROP
 
+from anim_common import MONO, titled
 
-from anim_common import MONO, csv_row, titled
+# Slide = Scene + points d'arrêt `next_slide()` (présentation au clic). Sous
+# `manim` normal, rend la MÊME vidéo continue -> montage/CI inchangés.
+from manim_slides import Slide
 
 from manim import (
-    Create,
-    Cross,
+    Arrow,
     DOWN,
     FadeIn,
     FadeOut,
+    FadeTransform,
     GREY_A,
     GREY_B,
-    GREY_C,
+    GrowArrow,
     LEFT,
     LaggedStart,
-    Line,
-    ORIGIN,
+    RED,
     RIGHT,
-    Scene,
-    SurroundingRectangle,
     Text,
     UP,
     VGroup,
@@ -29,96 +29,171 @@ from manim import (
 )
 
 
-class Ch3Extraction(Scene):
-    """Chapitre 3 — on ne garde que l'essentiel : extraction vers streets.csv."""
+class Ch3Normalisation(Slide):
+    """Chapitre 3 — deux versions d'une adresse : la version affichée (gardée)
+    et la clé normalisée (pour comparer). Elles coexistent."""
 
     def construct(self):
-        title, sub = titled(
-            "On ne garde que l'essentiel", "extraction → streets.csv", chapter=3
-        )
+        title, sub = titled("Deux versions d'une adresse", "normalisation", chapter=3)
         self.play(Write(title), run_time=1.0)
         self.play(FadeIn(sub), run_time=0.6)
 
-        header = csv_row(
-            ["voie", "code postal", "ville"], COLS_X, color=COL_SRC, font_size=22
+        # Adresses décalées à droite pour laisser la place aux libellés de rôle
+        # à GAUCHE de chaque ligne.
+        disp = Text(
+            "Impasse des Acacias 01310 Saint-Rémy",
+            font=MONO,
+            font_size=26,
+            color=COL_SRC,
+        ).move_to(UP * 1.5 + RIGHT * 0.7)
+        disp_cap = (
+            VGroup(
+                Text("affichage réel", font=MONO, font_size=18, color=COL_SRC),
+                Text(
+                    "utilisé tel par le programme",
+                    font=MONO,
+                    font_size=14,
+                    color=GREY_B,
+                ),
+            )
+            .arrange(DOWN, buff=0.1)
+            .next_to(disp, LEFT, buff=0.4)
         )
-        header.shift(UP * 1.5)
-        sep = Line(
-            header.get_left() + LEFT * 0.1,
-            header.get_right() + RIGHT * 0.4,
-            color=GREY_C,
-            stroke_width=2,
+        self.play(FadeIn(disp_cap), FadeIn(disp), run_time=0.8)
+        self.wait(0.6)
+        self.next_slide()  # pause sur l'adresse affichée avant normalisation
+
+        keyP = DOWN * 0.3 + RIGHT * 0.7
+
+        def kline(txt, color, t2c=None):
+            return Text(
+                txt, font=MONO, font_size=26, color=color, t2c=t2c or {}
+            ).move_to(keyP)
+
+        # Construit un t2c qui met EN ROUGE les caractères normalisés à ce passage.
+        def red(*idxs):
+            return {f"[{i}:{i + 1}]": RED for i in idxs}
+
+        key = disp.copy()
+        self.play(key.animate.move_to(keyP), run_time=0.8)
+
+        lbl = None
+
+        def npass(label, txt, color, t2c=None, rt=0.9):
+            nonlocal key, lbl
+            new_lbl = Text(label, font=MONO, font_size=20, color=COL_DROP).next_to(
+                key, DOWN, buff=0.5
+            )
+            if lbl is None:
+                self.play(FadeIn(new_lbl), run_time=0.4)
+            else:
+                self.play(FadeOut(lbl), FadeIn(new_lbl), run_time=0.4)
+            lbl = new_lbl
+            nw = kline(txt, color, t2c=t2c)
+            self.play(FadeTransform(key, nw), run_time=rt)
+            key = nw
+            self.wait(0.6)
+
+        # rouge sur les lettres qui changent : majuscules abaissées (I, A, S, R)…
+        npass(
+            "On supprime les majuscules",
+            "impasse des acacias 01310 saint-rémy",
+            COL_SRC,
+            t2c=red(0, 12, 26, 32),
         )
-        sep.next_to(header, DOWN, buff=0.15)
+        # …puis l'accent retiré (é → e)…
+        npass(
+            "On retire les accents",
+            "impasse des acacias 01310 saint-remy",
+            COL_SRC,
+            t2c=red(33),
+        )
+        # …le tiret devient une espace (rien à colorer : ce n'est pas une lettre).
+        npass(
+            "On remplace le tiret par un espace",
+            "impasse des acacias 01310 saint remy",
+            COL_TOK,
+        )
+        self.play(FadeOut(lbl), run_time=0.3)
 
-        r1 = csv_row(list(ADDR2), COLS_X, color=WHITE, font_size=22)
-        r1.shift(UP * 0.7)
-        r2 = csv_row(list(ADDR1), COLS_X, color=WHITE, font_size=22)
-        r2.shift(ORIGIN)
-        r3 = csv_row(list(ADDR1), COLS_X, color=GREY_B, font_size=22)
-        r3.shift(DOWN * 0.7)
+        key_cap = (
+            VGroup(
+                Text("la clé normalisée", font=MONO, font_size=18, color=COL_TOK),
+            )
+            .arrange(DOWN, buff=0.1)
+            .next_to(key, LEFT, buff=0.4)
+        )
+        link = Text("même adresse, deux usages", font_size=20, color=GREY_A).move_to(
+            UP * 0.6 + RIGHT * 0.7
+        )
+        self.play(FadeIn(key_cap), FadeIn(link), run_time=0.7)
+        self.wait(1.6)
+        self.next_slide()  # pause sur affichage + clé normalisée côte à côte
 
-        label = Text("streets.csv", font=MONO, font_size=22, color=COL_SRC)
-        label.next_to(header, UP, buff=0.35, aligned_edge=LEFT)
-
-        self.play(FadeIn(label), FadeIn(header), Create(sep), run_time=0.9)
+        self.play(FadeOut(VGroup(disp, disp_cap, key, key_cap, link)), run_time=0.7)
+        demo_t = Text(
+            "En écrivant le même mot différemment, même clé", font_size=24, color=GREY_A
+        ).move_to(UP * 1.4)
+        variants = (
+            VGroup(
+                Text("Rémy", font=MONO, font_size=40, color=COL_SRC),
+                Text("RÉMY", font=MONO, font_size=40, color=COL_SRC),
+                Text("remy", font=MONO, font_size=40, color=COL_SRC),
+            )
+            .arrange(DOWN, buff=0.45)
+            .move_to(LEFT * 3.3)
+        )
+        target = Text("remy", font=MONO, font_size=44, color=COL_TOK).move_to(
+            RIGHT * 3.0
+        )
+        tgt_cap = Text(
+            "la clé normalisée", font=MONO, font_size=20, color=COL_TOK
+        ).next_to(target, DOWN, buff=0.3)
+        # Bleu = ce que tape l'utilisateur ; flèche blanche = on aboutit à la clé.
+        var_cap = Text(
+            "ce que l'utilisateur écrit", font_size=20, color=COL_SRC
+        ).next_to(variants, DOWN, buff=0.35)
+        flow = Arrow(variants.get_right(), target.get_left(), color=WHITE, buff=0.4)
+        self.play(FadeIn(demo_t), run_time=0.5)
         self.play(
             LaggedStart(
-                FadeIn(r1, shift=0.2 * DOWN),
-                FadeIn(r2, shift=0.2 * DOWN),
-                FadeIn(r3, shift=0.2 * DOWN),
-                lag_ratio=0.35,
+                *[FadeIn(v, shift=0.2 * RIGHT) for v in variants], lag_ratio=0.25
             ),
-            run_time=1.6,
+            run_time=1.2,
         )
-        self.wait(0.6)
-
-        dup = Text("en double", font=MONO, font_size=20, color=COL_DROP).next_to(
-            r3, RIGHT, buff=0.5
-        )
-        cross = Cross(r3, stroke_color=COL_DROP, stroke_width=4)
-        self.play(FadeIn(dup), Create(cross), run_time=0.8)
-        self.wait(0.6)
-        dedup_note = Text(
-            "on retire les adresses en double", font=MONO, font_size=22, color=GREY_A
-        )
-        dedup_note.next_to(r2, DOWN, buff=1.0)
+        self.play(FadeIn(var_cap), run_time=0.4)
+        self.play(GrowArrow(flow), run_time=0.5)
+        self.wait(0.5)
+        copies = [v.copy() for v in variants]
+        self.add(*copies)
         self.play(
-            FadeOut(VGroup(r3, cross, dup), shift=0.3 * DOWN),
-            FadeIn(dedup_note),
+            LaggedStart(
+                *[
+                    c.animate.scale(0.3).move_to(target.get_center()).set_opacity(0.0)
+                    for c in copies
+                ],
+                lag_ratio=0.2,
+            ),
+            run_time=1.4,
+        )
+        self.remove(*copies)
+        self.play(
+            FadeIn(target),
+            FadeIn(tgt_cap),
             run_time=0.9,
         )
         self.wait(1.0)
 
-        box = SurroundingRectangle(r2, color=COL_SRC, buff=0.12)
-        note = Text(
-            "On ne retient que les adresses uniques",
-            font=MONO,
-            font_size=22,
-            color=COL_SRC,
+        why = (
+            Text(
+                "la clé est un mot normalisé, pour comparer les variantes",
+                font_size=20,
+                color=GREY_B,
+            )
+            .next_to(VGroup(variants, target), DOWN, buff=0.9)
+            .set_x(0)
         )
-        note.move_to(dedup_note)
-        self.play(FadeOut(dedup_note), Create(box), FadeIn(note), run_time=0.9)
-        self.wait(1.0)
-
-        lines = Text(
-            "26,5 millions d'adresses  →  2,2 millions d'adresses uniques",
-            font=MONO,
-            font_size=22,
-            color=COL_TOK,
-        )
-        lines.next_to(note, DOWN, buff=0.5)
-        saved = Text(
-            "≈ 24 millions d'adresses en double économisées",
-            font=MONO,
-            font_size=20,
-            color=GREY_B,
-        )
-        saved.next_to(lines, DOWN, buff=0.25)
-        size = Text("2 Go  →  80 Mo", font=MONO, font_size=24, color=COL_TOK)
-        size.next_to(saved, DOWN, buff=0.45)
-        self.play(FadeIn(lines), run_time=0.7)
-        self.play(FadeIn(saved), run_time=0.6)
-        self.play(FadeIn(size), run_time=0.7)
+        self.play(FadeIn(why), run_time=0.7)
         self.wait(2.0)
+        self.next_slide()  # pause sur « variantes → même clé »
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=1.0)

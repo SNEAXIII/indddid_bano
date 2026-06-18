@@ -130,8 +130,8 @@ android-clean: ## Nettoie le build Gradle
 # 1er `uv run manim` crée/synchronise .venv tout seul, puis réutilise l'env
 # QUALITY : l (480p), m (720p), h (1080p, défaut), k (4K).
 ANIM_DIR   ?= $(ROOT)/demo/animations
-ANIM_FILE  ?= workflow_pipeline_ch1.py
-ANIM_SCENE ?= Ch1Apercu
+ANIM_FILE  ?= workflow_pipeline_ch0.py
+ANIM_SCENE ?= Ch0Apercu
 QUALITY    ?= h
 MANIM       = cd "$(ANIM_DIR)" && uv run manim -q$(QUALITY)
 # Dossier média correspondant à QUALITY (pour retrouver les MP4 à monter).
@@ -151,9 +151,9 @@ anim-preview: ## Rend en basse qualité et ouvre le lecteur (-p -ql)
 	cd "$(ANIM_DIR)" && uv run manim -pql $(ANIM_FILE) $(ANIM_SCENE)
 
 # Liste des chapitres -> prérequis : `make -jN anim-workflow` les rend en parallèle.
-WF_CHAPTERS := anim-wf-ch1 anim-wf-ch2 anim-wf-ch3 anim-wf-ch4 anim-wf-ch5 \
-               anim-wf-ch6 anim-wf-ch7 anim-wf-ch8 anim-wf-ch9 anim-wf-ch10 \
-               anim-wf-ch11
+WF_CHAPTERS := anim-wf-ch0 anim-wf-ch1 anim-wf-ch2 anim-wf-ch3 anim-wf-ch4 \
+               anim-wf-ch5 anim-wf-ch6 anim-wf-ch7 anim-wf-ch8 anim-wf-ch9 \
+               anim-wf-ch10
 
 anim-workflow: $(WF_CHAPTERS) ## Rend les 11 chapitres-clips (parallèle : make -j11 anim-workflow)
 
@@ -166,39 +166,52 @@ anim-workflow-par: ## Rend les 11 chapitres EN PARALLÈLE puis monte (JOBS=, QUA
 	$(MAKE) -j$(JOBS) anim-workflow
 	cd "$(ANIM_DIR)" && uv run python concat_chapters.py $(MONTAGE_QDIR)
 
+WF_SCENES := Ch0Apercu Ch1Donnees Ch2Extraction Ch3Normalisation Ch4Tokenisation \
+             Ch5Index Ch6Fst Ch7Fichiers Ch8Requete Ch9Levenshtein Ch10Scoring
+SLIDES_OPTS := --offline -c auto_play_media=true -c controls=true
+
+anim-present: ## Talk complet en diaporama HTML au clic -> present/talk.html (parallèle, JOBS=, QUALITY=)
+	$(MAKE) -j$(JOBS) anim-workflow
+	# On nettoie SEULEMENT les artefacts (pas le dossier present/ : un serveur
+	# `anim-present-serve` actif le verrouille comme cwd sous Windows).
+	cd "$(ANIM_DIR)" && rm -rf present/talk_assets present/talk.html && uv run manim-slides convert $(SLIDES_OPTS) $(WF_SCENES) present/talk.html
+
+anim-present-serve: ## Sert present/ en HTTP (autoplay OK) : http://localhost:8000/talk.html
+	cd "$(ANIM_DIR)/present" && uv run python -m http.server 8000
+
 # --- Chapitres du workflow, un par un (pour itérer sur un seul clip) ---------
-anim-wf-ch1: ## Workflow ch.1 — vue d'ensemble (Ch1Apercu)
-	$(MANIM) workflow_pipeline_ch1.py Ch1Apercu
+anim-wf-ch0: ## Workflow ch.0 — vue d'ensemble (Ch0Apercu)
+	$(MANIM) workflow_pipeline_ch0.py Ch0Apercu
 
-anim-wf-ch2: ## Workflow ch.2 — récupérer les données (Ch2Donnees)
-	$(MANIM) workflow_pipeline_ch2.py Ch2Donnees
+anim-wf-ch1: ## Workflow ch.1 — récupérer les données (Ch1Donnees)
+	$(MANIM) workflow_pipeline_ch1.py Ch1Donnees
 
-anim-wf-ch3: ## Workflow ch.3 — extraction streets.csv (Ch3Extraction)
-	$(MANIM) workflow_pipeline_ch3.py Ch3Extraction
+anim-wf-ch2: ## Workflow ch.2 — extraction streets.csv (Ch2Extraction)
+	$(MANIM) workflow_pipeline_ch2.py Ch2Extraction
 
-anim-wf-ch4: ## Workflow ch.4 — normalisation (Ch4Normalisation)
-	$(MANIM) workflow_pipeline_ch4.py Ch4Normalisation
+anim-wf-ch3: ## Workflow ch.3 — normalisation (Ch3Normalisation)
+	$(MANIM) workflow_pipeline_ch3.py Ch3Normalisation
 
-anim-wf-ch5: ## Workflow ch.5 — tokenisation (Ch5Tokenisation)
-	$(MANIM) workflow_pipeline_ch5.py Ch5Tokenisation
+anim-wf-ch4: ## Workflow ch.4 — tokenisation (Ch4Tokenisation)
+	$(MANIM) workflow_pipeline_ch4.py Ch4Tokenisation
 
-anim-wf-ch6: ## Workflow ch.6 — construction de l'index (Ch6Index)
-	$(MANIM) workflow_pipeline_ch6.py Ch6Index
+anim-wf-ch5: ## Workflow ch.5 — construction de l'index (Ch5Index)
+	$(MANIM) workflow_pipeline_ch5.py Ch5Index
 
-anim-wf-ch7: ## Workflow ch.7 — le dictionnaire en arbre / FST (Ch7Fst)
-	$(MANIM) workflow_pipeline_ch7.py Ch7Fst
+anim-wf-ch6: ## Workflow ch.6 — le dictionnaire en arbre / FST (Ch6Fst)
+	$(MANIM) workflow_pipeline_ch6.py Ch6Fst
 
-anim-wf-ch8: ## Workflow ch.8 — l'index en fichiers binaires (Ch8Fichiers)
-	$(MANIM) workflow_pipeline_ch8.py Ch8Fichiers
+anim-wf-ch7: ## Workflow ch.7 — l'index en fichiers binaires (Ch7Fichiers)
+	$(MANIM) workflow_pipeline_ch7.py Ch7Fichiers
 
-anim-wf-ch9: ## Workflow ch.9 — la requête côté Rust : normalise/tokenise/ET (Ch9Requete)
-	$(MANIM) workflow_pipeline_ch9.py Ch9Requete
+anim-wf-ch8: ## Workflow ch.8 — la requête côté Rust : normalise/tokenise/ET (Ch8Requete)
+	$(MANIM) workflow_pipeline_ch8.py Ch8Requete
 
-anim-wf-ch10: ## Workflow ch.10 — recherche Levenshtein (Ch10Levenshtein)
-	$(MANIM) workflow_pipeline_ch10.py Ch10Levenshtein
+anim-wf-ch9: ## Workflow ch.9 — recherche Levenshtein (Ch9Levenshtein)
+	$(MANIM) workflow_pipeline_ch9.py Ch9Levenshtein
 
-anim-wf-ch11: ## Workflow ch.11 — scoring + résultats (Ch11Scoring)
-	$(MANIM) workflow_pipeline_ch11.py Ch11Scoring
+anim-wf-ch10: ## Workflow ch.10 — scoring + résultats (Ch10Scoring)
+	$(MANIM) workflow_pipeline_ch10.py Ch10Scoring
 
 # Anim STANDALONE (hors film : pas un *_pipeline.py, pas dans le montage).
 anim-flat-trie: ## Anim standalone : le trie aplati Java (FlatTrieDemo)
@@ -207,7 +220,7 @@ anim-flat-trie: ## Anim standalone : le trie aplati Java (FlatTrieDemo)
 # Extrait une frame d'un chapitre rendu (vérif visuelle). ANIM_SCENE= obligatoire.
 # AT=0..1 (position, défaut 0.95). Sortie -> media/frames/<Scene>.png (ou OUT=).
 ANIM_AT  ?= 0.95
-anim-frame: ## Capture une frame d'un chapitre : make anim-frame ANIM_SCENE=Ch8Scoring QUALITY=l [ANIM_AT=0.95] [OUT=...]
+anim-frame: ## Capture une frame d'un chapitre : make anim-frame ANIM_SCENE=Ch10Scoring QUALITY=l [ANIM_AT=0.95] [OUT=...]
 	cd "$(ANIM_DIR)" && uv run python grab_frame.py $(ANIM_SCENE) --quality $(MONTAGE_QDIR) --at $(ANIM_AT) $(if $(OUT),--out "$(OUT)",)
 
 # ===================== Bench v1 (formats de stockage) =======================
@@ -263,9 +276,10 @@ clean: ## Supprime artefacts/rapports générés (bench v1/v2)
         android-so android-index android-debug android-install android-clean \
         anim anim-one anim-preview \
         anim-workflow anim-workflow-montage anim-workflow-par \
-        anim-wf-ch1 anim-wf-ch2 anim-wf-ch3 anim-wf-ch4 anim-wf-ch5 \
-        anim-wf-ch6 anim-wf-ch7 anim-wf-ch8 anim-wf-ch9 anim-wf-ch10 \
-        anim-wf-ch11 anim-flat-trie anim-frame \
+        anim-present anim-present-pptx anim-present-serve \
+        anim-wf-ch0 anim-wf-ch1 anim-wf-ch2 anim-wf-ch3 anim-wf-ch4 \
+        anim-wf-ch5 anim-wf-ch6 anim-wf-ch7 anim-wf-ch8 anim-wf-ch9 \
+        anim-wf-ch10 anim-flat-trie anim-frame \
         v1-data v1-build v1-bench v1 \
         v2-queries v2-prebuild v2-bench v2-bench-build v2-export-android v2-test v2 \
         clean

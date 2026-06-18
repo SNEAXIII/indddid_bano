@@ -19,17 +19,17 @@ import av
 # media/videos/workflow_pipeline_ch<N>/<qualité>/<Scene>.mp4. (module, Scene).
 # Doit rester aligné avec les ch files et la liste .PHONY du Makefile.
 CHAPTERS = [
-    ("workflow_pipeline_ch1", "Ch1Apercu"),
-    ("workflow_pipeline_ch2", "Ch2Donnees"),
-    ("workflow_pipeline_ch3", "Ch3Extraction"),
-    ("workflow_pipeline_ch4", "Ch4Normalisation"),
-    ("workflow_pipeline_ch5", "Ch5Tokenisation"),
-    ("workflow_pipeline_ch6", "Ch6Index"),
-    ("workflow_pipeline_ch7", "Ch7Fst"),
-    ("workflow_pipeline_ch8", "Ch8Fichiers"),
-    ("workflow_pipeline_ch9", "Ch9Requete"),
-    ("workflow_pipeline_ch10", "Ch10Levenshtein"),
-    ("workflow_pipeline_ch11", "Ch11Scoring"),
+    ("workflow_pipeline_ch0", "Ch0Apercu"),
+    ("workflow_pipeline_ch1", "Ch1Donnees"),
+    ("workflow_pipeline_ch2", "Ch2Extraction"),
+    ("workflow_pipeline_ch3", "Ch3Normalisation"),
+    ("workflow_pipeline_ch4", "Ch4Tokenisation"),
+    ("workflow_pipeline_ch5", "Ch5Index"),
+    ("workflow_pipeline_ch6", "Ch6Fst"),
+    ("workflow_pipeline_ch7", "Ch7Fichiers"),
+    ("workflow_pipeline_ch8", "Ch8Requete"),
+    ("workflow_pipeline_ch9", "Ch9Levenshtein"),
+    ("workflow_pipeline_ch10", "Ch10Scoring"),
 ]
 
 

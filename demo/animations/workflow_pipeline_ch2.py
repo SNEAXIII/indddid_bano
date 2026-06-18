@@ -1,131 +1,130 @@
-"""Chapitre 2 du workflow BANO : donnees source."""
+"""Chapitre 2 du workflow BANO : extraction de streets.csv."""
 
-from workflow_pipeline_shared import COL_SRC, COL_TOK
+from workflow_pipeline_shared import ADDR1, ADDR2, COL_DROP, COL_SRC, COL_TOK, COLS_X
 
 
-from anim_common import MONO, file_box, titled
+from anim_common import MONO, csv_row, titled
+
+# Slide = Scene + points d'arrêt `next_slide()` (présentation au clic). Sous
+# `manim` normal, rend la MÊME vidéo continue -> montage/CI inchangés.
+from manim_slides import Slide
 
 from manim import (
-    Arrow,
     Create,
+    Cross,
     DOWN,
     FadeIn,
     FadeOut,
     GREY_A,
     GREY_B,
-    GREY_D,
-    GrowArrow,
+    GREY_C,
     LEFT,
     LaggedStart,
     Line,
-    Scene,
+    ORIGIN,
+    RIGHT,
+    SurroundingRectangle,
     Text,
+    UP,
     VGroup,
+    WHITE,
     Write,
 )
 
 
-class Ch2Donnees(Scene):
-    """Chapitre 2 — d'où viennent les adresses : le fichier national BANO,
-    avec un APERÇU RÉEL de son contenu (beaucoup de colonnes inutiles)."""
+class Ch2Extraction(Slide):
+    """Chapitre 2 — on ne garde que l'essentiel : extraction vers streets.csv."""
 
     def construct(self):
         title, sub = titled(
-            "D'où viennent les adresses", "le fichier national BANO complet", chapter=2
+            "On ne garde que l'essentiel", "extraction → streets.csv", chapter=2
         )
         self.play(Write(title), run_time=1.0)
         self.play(FadeIn(sub), run_time=0.6)
 
-        fb = file_box("full.csv", COL_SRC, width=3.2)
-        fb.next_to(sub, DOWN, buff=0.45)
-        self.play(FadeIn(fb, shift=0.3 * DOWN), run_time=0.9)
-        self.wait(0.4)
-
-        useful = {
-            "Impasse des Acacias": COL_SRC,
-            "01400": COL_SRC,
-            "L'Abergement-Clémenciat": COL_SRC,
-        }
-        raw = [
-            "010010005-103  103  Impasse des Acacias  01400  L'Abergement-Clémenciat  OSM  46.147615  4.924047",
-            "010010005-104  104  Impasse des Acacias  01400  L'Abergement-Clémenciat  OSM  46.147662  4.924207",
-            "010010005-26   26   Impasse des Acacias  01400  L'Abergement-Clémenciat  OSM  46.146906  4.924205",
-        ]
-
-        cols = [
-            (0, "id"),
-            (15, "num"),
-            (20, "voie"),
-            (41, "cp"),
-            (48, "ville"),
-            (73, "src"),
-            (78, "lat"),
-            (89, "lon"),
-        ]
-        hdr = [" "] * 96
-        for off, label in cols:
-            for i, ch in enumerate(label):
-                hdr[off + i] = ch
-        header_line = Text(
-            "".join(hdr).rstrip(),
-            font=MONO,
-            font_size=18,
-            color=GREY_A,
-            t2c={"voie": COL_SRC, "cp": COL_SRC, "ville": COL_SRC},
+        header = csv_row(
+            ["voie", "code postal", "ville"], COLS_X, color=COL_SRC, font_size=22
         )
-        data_rows = VGroup(
-            *[
-                Text(line, font=MONO, font_size=18, color=GREY_B, t2c=useful)
-                for line in raw
-            ]
-        )
-        data_rows.arrange(DOWN, buff=0.28, aligned_edge=LEFT)
-        data_rows.next_to(header_line, DOWN, buff=0.22, aligned_edge=LEFT)
-        table = VGroup(header_line, data_rows)
-        if table.width > 12.6:
-            table.scale_to_fit_width(12.6)
-        table.next_to(fb, DOWN, buff=0.5)
+        header.shift(UP * 1.5)
         sep = Line(
-            header_line.get_left(),
-            header_line.get_right(),
-            color=GREY_D,
+            header.get_left() + LEFT * 0.1,
+            header.get_right() + RIGHT * 0.4,
+            color=GREY_C,
             stroke_width=2,
-        ).next_to(header_line, DOWN, buff=0.06)
-        arrow = Arrow(fb.get_bottom(), table.get_top(), color=GREY_B, buff=0.15)
+        )
+        sep.next_to(header, DOWN, buff=0.15)
 
-        self.play(GrowArrow(arrow), run_time=0.7)
-        self.play(FadeIn(header_line), Create(sep), run_time=0.7)
+        r1 = csv_row(list(ADDR2), COLS_X, color=WHITE, font_size=22)
+        r1.shift(UP * 0.7)
+        r2 = csv_row(list(ADDR1), COLS_X, color=WHITE, font_size=22)
+        r2.shift(ORIGIN)
+        r3 = csv_row(list(ADDR1), COLS_X, color=GREY_B, font_size=22)
+        r3.shift(DOWN * 0.7)
+
+        label = Text("streets.csv", font=MONO, font_size=22, color=COL_SRC)
+        label.next_to(header, UP, buff=0.35, aligned_edge=LEFT)
+
+        self.play(FadeIn(label), FadeIn(header), Create(sep), run_time=0.9)
         self.play(
             LaggedStart(
-                *[FadeIn(r, shift=0.1 * DOWN) for r in data_rows], lag_ratio=0.2
+                FadeIn(r1, shift=0.2 * DOWN),
+                FadeIn(r2, shift=0.2 * DOWN),
+                FadeIn(r3, shift=0.2 * DOWN),
+                lag_ratio=0.35,
             ),
-            run_time=1.4,
+            run_time=1.6,
         )
         self.wait(0.6)
 
-        legend = Text(
-            "en bleu : voie · code postal · ville",
-            font_size=22,
-            color=GREY_A,
-            t2c={"voie · code postal · ville": COL_SRC},
+        dup = Text("en double", font=MONO, font_size=20, color=COL_DROP).next_to(
+            r3, RIGHT, buff=0.5
         )
-        legend.next_to(table, DOWN, buff=0.45)
-        note = VGroup(
-            Text(
-                "Fichier complet : 26,5 millions d'adresses  ~  2 Go",
-                font=MONO,
-                font_size=24,
-                color=COL_TOK,
-            ),
-            Text(
-                "on veut juste l'adresse — pas la géoloc (lat/lon) ni le reste",
-                font_size=20,
-                color=GREY_B,
-            ),
-        ).arrange(DOWN, buff=0.18)
-        note.next_to(legend, DOWN, buff=0.35)
+        cross = Cross(r3, stroke_color=COL_DROP, stroke_width=4)
+        self.play(FadeIn(dup), Create(cross), run_time=0.8)
+        self.wait(0.6)
+        self.next_slide()  # pause sur l'adresse en double repérée
+        dedup_note = Text(
+            "on retire les adresses en double", font=MONO, font_size=22, color=GREY_A
+        )
+        dedup_note.next_to(r2, DOWN, buff=1.0)
+        self.play(
+            FadeOut(VGroup(r3, cross, dup), shift=0.3 * DOWN),
+            FadeIn(dedup_note),
+            run_time=0.9,
+        )
+        self.wait(1.0)
+        self.next_slide()  # pause sur « on retire les doublons »
 
-        self.play(FadeIn(legend), run_time=0.7)
-        self.play(FadeIn(note), run_time=0.7)
+        box = SurroundingRectangle(r2, color=COL_SRC, buff=0.12)
+        note = Text(
+            "On ne retient que les adresses uniques",
+            font=MONO,
+            font_size=22,
+            color=COL_SRC,
+        )
+        note.move_to(dedup_note)
+        self.play(FadeOut(dedup_note), Create(box), FadeIn(note), run_time=0.9)
+        self.wait(1.0)
+
+        lines = Text(
+            "26,5 millions d'adresses  →  2,2 millions d'adresses uniques",
+            font=MONO,
+            font_size=22,
+            color=COL_TOK,
+        )
+        lines.next_to(note, DOWN, buff=0.5)
+        saved = Text(
+            "≈ 24 millions d'adresses en double économisées",
+            font=MONO,
+            font_size=20,
+            color=GREY_B,
+        )
+        saved.next_to(lines, DOWN, buff=0.25)
+        size = Text("2 Go  →  80 Mo", font=MONO, font_size=24, color=COL_TOK)
+        size.next_to(saved, DOWN, buff=0.45)
+        self.play(FadeIn(lines), run_time=0.7)
+        self.play(FadeIn(saved), run_time=0.6)
+        self.play(FadeIn(size), run_time=0.7)
         self.wait(2.0)
+        self.next_slide()  # pause sur le gain 2 Go → 80 Mo
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=1.0)

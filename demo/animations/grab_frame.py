@@ -3,7 +3,7 @@
 Usage :  uv run python grab_frame.py <Scene> [--quality 480p15] [--at 0.95] [--out chemin.png]
 
 Défauts : qualité 480p15, frame à 95 % du clip, sortie media/frames/<Scene>.png.
-Passe par le Makefile : `make anim-frame ANIM_SCENE=Ch8Scoring QUALITY=l`.
+Passe par le Makefile : `make anim-frame ANIM_SCENE=Ch10Scoring QUALITY=l`.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ QDIR = {"l": "480p15", "m": "720p30", "h": "1080p60", "k": "2160p60"}
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Extrait une frame d'un chapitre rendu.")
-    p.add_argument("scene", help="Nom de la classe Scene (ex. Ch8Scoring)")
+    p.add_argument("scene", help="Nom de la classe Scene (ex. Ch10Scoring)")
     p.add_argument(
         "--quality",
         default="480p15",

@@ -64,3 +64,5 @@ records.bin
 Thumbs.db
 *.swp
 *~
+demo/animations/present
+demo/animations/slides

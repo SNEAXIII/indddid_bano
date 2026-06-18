@@ -1,249 +1,310 @@
-"""Chapitre 9 du workflow BANO : la requête de l'utilisateur, côté Rust.
+"""Chapitre 9 du workflow BANO : recherche tolérante aux fautes."""
 
-Vue d'ensemble de `fn search()` sans descendre au détail :
-  1. `tokenize(query)` : on normalise (minuscules, accents, ponctuation) et on
-     découpe la requête en mots ;
-  2. chaque mot est cherché dans l'index (préfixe ∪ fautes tolérées) ;
-  3. intersection ET : on ne garde que les adresses qui contiennent TOUS les
-     mots, en additionnant les poids.
+from workflow_pipeline_shared import COL_SCORE, COL_SRC, COL_TOK, QUERY_TYPO, COL_INDEX
+from anim_common import MONO, titled
+from workflow_pipeline_ch6 import node, edge  # mêmes états/arêtes que l'arbre du ch.7
 
-Registre semi-technique : quelques vraies lignes Rust en annotation, le reste
-illustré visuellement. Le « pourquoi acasias trouve acacias » est détaillé au
-chapitre suivant (Levenshtein) ; ici on reste au niveau du pipeline.
-"""
-
-from workflow_pipeline_shared import COL_SRC, COL_TOK, COL_INDEX, COL_SCORE
-
-from anim_common import MONO, chip, code_line, titled
+# Slide = Scene + points d'arrêt `next_slide()` (présentation au clic). Sous
+# `manim` normal, rend la MÊME vidéo continue -> montage/CI inchangés.
+from manim_slides import Slide
 
 from manim import (
-    Arrow,
     Create,
     DOWN,
     FadeIn,
     FadeOut,
     FadeTransform,
+    Flash,
     GREY_A,
     GREY_B,
-    GrowArrow,
     LaggedStart,
     LEFT,
-    MoveToTarget,
+    Line,
     RED,
     RIGHT,
     RoundedRectangle,
-    Scene,
     SurroundingRectangle,
     Text,
+    Transform,
     UP,
     VGroup,
     Write,
 )
 
 
-class Ch9Requete(Scene):
-    """Chapitre 9 — la requête de l'utilisateur : normalise, tokenise, ET."""
+def cut_mark(pt, color=RED):
+    """Petite croix « branche coupée » centrée sur un point."""
+    d = 0.14
+    return VGroup(
+        Line(
+            pt + d * (LEFT + DOWN), pt + d * (RIGHT + UP), color=color, stroke_width=6
+        ),
+        Line(
+            pt + d * (LEFT + UP), pt + d * (RIGHT + DOWN), color=color, stroke_width=6
+        ),
+    )
+
+
+class Ch9Levenshtein(Slide):
+    """Chapitre 9 — on cherche même avec une faute : distance de Levenshtein."""
 
     def construct(self):
-        self.title, self.sub = titled(
-            "Quand l'utilisateur cherche", "fn search() — en trois temps", chapter=9
+        title, sub = titled(
+            "On cherche, même avec une faute", "distance de Levenshtein", chapter=9
         )
-        self.play(Write(self.title), run_time=1.0)
-        self.play(FadeIn(self.sub), run_time=0.6)
+        self.sub = sub
+        self.play(Write(title), run_time=1.0)
+        self.play(FadeIn(sub), run_time=0.6)
 
-        self.scene_tokenise()
-        self.scene_par_mot()
-        self.scene_intersection()
-
-        self.play(*[FadeOut(m) for m in self.mobjects], run_time=1.0)
-
-    # --- 1. normalise + tokenise --------------------------------------------
-    def scene_tokenise(self):
-        # La requête brute, telle que tapée (avec sa faute « Acasias »).
-        raw_box = RoundedRectangle(
+        # --- A. la requête fautive devient une clé ---------------------------
+        qbox = RoundedRectangle(
             corner_radius=0.15,
-            width=5.0,
-            height=0.9,
+            width=6.2,
+            height=1.0,
             stroke_color=COL_SRC,
             stroke_width=3,
             fill_color=COL_SRC,
             fill_opacity=0.10,
-        ).move_to(UP * 1.8)
-        raw = Text(
+        )
+        qbox.move_to(UP * 1.45)
+        qtyped = Text(
             "Impasse des Acasias",
             font=MONO,
-            font_size=28,
+            font_size=30,
             color=COL_SRC,
             t2c={"Acasias": RED},
-        ).move_to(raw_box)
-        # Annotation Rust courte, à droite de la boîte (sans détail).
-        rust = code_line("tokenize(query)", font_size=20)
-        rust.next_to(raw_box, RIGHT, buff=0.5)
-
-        self.play(FadeIn(raw_box), FadeIn(raw), run_time=0.7)
-        self.play(FadeIn(rust), run_time=0.5)
-        self.wait(0.5)
-
-        # Étape a : normaliser (minuscules, accents, ponctuation propre).
-        norm = Text(
-            "impasse des acasias",
-            font=MONO,
-            font_size=28,
-            color=COL_TOK,
-            t2c={"acasias": RED},
-        ).move_to(UP * 0.3)
-        a1 = Arrow(
-            raw_box.get_bottom(), norm.get_top() + UP * 0.05, color=GREY_B, buff=0.18
+        ).move_to(qbox)
+        qcap = Text("ce que tape l'utilisateur", font_size=20, color=GREY_B).next_to(
+            qbox, UP, buff=0.15
         )
-        norm_cap = Text("minuscules, sans accent", font_size=18, color=GREY_A)
-        norm_cap.next_to(norm, RIGHT, buff=0.5)
-        self.play(GrowArrow(a1), run_time=0.4)
-        self.play(FadeTransform(raw.copy(), norm), FadeIn(norm_cap), run_time=0.9)
-        self.wait(0.6)
+        self.play(FadeIn(qbox), FadeIn(qtyped), FadeIn(qcap), run_time=0.8)
+        self.wait(0.8)
 
-        # Étape b : découper en mots (jetons).
-        toks = (
-            VGroup(
-                chip("impasse", font_size=24),
-                chip("des", font_size=24),
-                chip("acasias", color=COL_SRC, font_size=24),
-            )
-            .arrange(RIGHT, buff=0.4)
-            .move_to(DOWN * 1.4)
-        )
-        a2 = Arrow(
-            norm.get_bottom(), toks.get_top() + UP * 0.05, color=GREY_B, buff=0.18
-        )
-        toks_cap = Text("découpée en mots", font_size=18, color=GREY_A)
-        toks_cap.next_to(toks, DOWN, buff=0.22)
-        self.play(GrowArrow(a2), run_time=0.4)
-        self.play(
-            LaggedStart(*[FadeIn(t, shift=0.2 * DOWN) for t in toks], lag_ratio=0.3),
-            FadeIn(toks_cap),
-            run_time=1.0,
-        )
-        self.wait(1.0)
-
-        self.play(
-            FadeOut(VGroup(raw_box, raw, rust, a1, norm, norm_cap, a2, toks_cap)),
-            run_time=0.6,
-        )
-        # On transmet les jetons à la scène suivante.
-        self.toks = toks
-
-    # --- 2. chaque mot cherché dans l'index ---------------------------------
-    def scene_par_mot(self):
-        # Replace les 3 jetons en colonne, à gauche.
-        toks = self.toks
-        toks.generate_target()
-        toks.target.arrange(DOWN, buff=0.7, aligned_edge=LEFT)
-        toks.target.to_edge(LEFT, buff=1.2).shift(DOWN * 0.2)
-        self.play(MoveToTarget(toks), run_time=0.8)
-        self.wait(0.5)
-
-        # Chaque jeton -> le(s) mot(s) trouvé(s) dans l'index. impasse/des = exact,
-        # acasias = trouvé via tolérance (≈ acacias) — détaillé au chap. suivant.
-        found = [
-            ("impasse", COL_INDEX, "exact"),
-            ("des", COL_INDEX, "exact"),
-            ("acacias", COL_INDEX, "≈ 1 faute"),
-        ]
-        # Colonnes alignées : flèches de longueur identique (x fixes), mots de
-        # droite alignés sur leur bord GAUCHE, notes dans une colonne commune.
-        arrow_x0 = toks.get_right()[0] + 0.25  # départ commun (bord droit colonne)
-        word_x = 2.0  # bord gauche commun des mots trouvés
-        note_x = 4.4  # colonne des annotations
-        arrows, words, notes = VGroup(), VGroup(), VGroup()
-        for tok, (label, col, note) in zip(toks, found):
-            y = tok.get_y()
-            w = chip(label, color=col, font_size=24)
-            w.move_to([word_x, y, 0], aligned_edge=LEFT)
-            ar = Arrow([arrow_x0, y, 0], [word_x - 0.1, y, 0], color=GREY_B, buff=0.1)
-            nt = Text(note, font_size=17, color=(RED if note != "exact" else GREY_A))
-            nt.move_to([note_x, y, 0], aligned_edge=LEFT)
-            arrows.add(ar)
-            words.add(w)
-            notes.add(nt)
-
-        for ar, w, nt in zip(arrows, words, notes):
-            self.play(GrowArrow(ar), FadeIn(w), FadeIn(nt), run_time=0.6)
-        self.wait(0.4)
-
-        # On souligne le seul cas non trivial (lien vers le chapitre Levenshtein).
-        hl = SurroundingRectangle(VGroup(toks[2], words[2]), color=RED, buff=0.18)
-        hl_cap = Text(
-            "faute corrigée — détail au chapitre suivant", font_size=18, color=RED
-        )
-        hl_cap.next_to(hl, DOWN, buff=0.25).set_x(0)
-        self.play(Create(hl), FadeIn(hl_cap), run_time=0.7)
+        qtext = Text(
+            QUERY_TYPO, font=MONO, font_size=30, color=COL_TOK, t2c={"acasias": RED}
+        ).move_to(qbox)
+        same = Text(
+            "→ traitée comme une adresse : même clé", font_size=20, color=COL_TOK
+        ).next_to(qbox, DOWN, buff=0.3)
+        self.play(FadeTransform(qtyped, qtext), run_time=0.9)
+        self.play(FadeIn(same), run_time=0.6)
         self.wait(1.2)
+        self.next_slide()  # pause sur « faute traitée comme une adresse »
+        # La requête a joué son rôle : on libère le haut pour la comparaison.
+        self.play(FadeOut(VGroup(qbox, qtext, qcap, same)), run_time=0.5)
 
-        self.play(
-            FadeOut(VGroup(arrows, words, notes, hl, hl_cap)),
-            FadeOut(toks),
-            run_time=0.6,
+        # --- A2. on parcourt l'arbre du dico (façon ch.7) --------------------
+        self.scene_parcours_arbre()
+
+        # --- B. comparaison lettre par lettre (membre à membre) --------------
+        # Le mot tapé et le mot de l'index, alignés EN COLONNES. On compare
+        # chaque position : un trait vert si les deux lettres coïncident,
+        # rouge sinon. C'est la lecture concrète de la distance de Levenshtein.
+        typed_s, index_s = "acasias", "acacias"
+        n = len(typed_s)
+        step = 0.64
+        x0 = -(n - 1) / 2 * step
+        y_top, y_bot = 1.1, 0.1
+
+        typed_chars = VGroup(
+            *[Text(ch, font=MONO, font_size=42, color=COL_TOK) for ch in typed_s]
         )
-
-    # --- 3. intersection ET --------------------------------------------------
-    def scene_intersection(self):
-        # On repart propre : 3 lignes « mot -> numéros d'adresses qui le
-        # contiennent », puis l'intersection (records présents PARTOUT).
-        rows_data = [
-            ("impasse", "0", COL_INDEX),
-            ("des", "0, 1", COL_INDEX),
-            ("acacias", "0, 1", COL_INDEX),
-        ]
-
-        def line(word, ids, col):
-            return VGroup(
-                chip(word, color=col, font_size=22),
-                Text("→", font=MONO, font_size=22, color=GREY_B),
-                Text(f"adresses {{{ids}}}", font=MONO, font_size=22, color=COL_SCORE),
-            ).arrange(RIGHT, buff=0.25)
-
-        rows = VGroup(*[line(w, i, c) for w, i, c in rows_data])
-        rows.arrange(DOWN, buff=0.3, aligned_edge=LEFT).move_to(UP * 0.8 + LEFT * 1.2)
-
-        rust = code_line("// intersection ET (somme des poids)", font_size=19)
-        rust.next_to(self.sub, DOWN, buff=0.3).set_x(0)
-        self.play(FadeIn(rust), run_time=0.5)
-        self.play(
-            LaggedStart(*[FadeIn(r, shift=0.2 * RIGHT) for r in rows], lag_ratio=0.25),
-            run_time=1.2,
+        index_chars = VGroup(
+            *[Text(ch, font=MONO, font_size=42, color=COL_INDEX) for ch in index_s]
         )
-        self.wait(0.6)
+        for i, c in enumerate(typed_chars):
+            c.move_to([x0 + i * step, y_top, 0])
+        for i, c in enumerate(index_chars):
+            c.move_to([x0 + i * step, y_bot, 0])
 
-        # Le ET : seule l'adresse 0 est présente dans les trois lignes.
-        keep = VGroup(rows[0][2], rows[1][2], rows[2][2])
-        flash = [SurroundingRectangle(r[2], color=COL_SCORE, buff=0.08) for r in rows]
-        self.play(*[Create(f) for f in flash], run_time=0.6)
+        typed_lbl = Text("ce qui est tapé", font=MONO, font_size=18, color=COL_TOK)
+        good_lbl = Text("dans l'index", font=MONO, font_size=18, color=COL_INDEX)
+        typed_lbl.next_to(typed_chars, LEFT, buff=0.6)
+        good_lbl.next_to(index_chars, LEFT, buff=0.6)
+        good_lbl.align_to(typed_lbl, RIGHT)  # bord droit net entre les 2 étiquettes
+
+        self.play(FadeIn(typed_chars, shift=0.2 * UP), FadeIn(typed_lbl), run_time=0.6)
+        self.play(FadeIn(index_chars, shift=0.2 * DOWN), FadeIn(good_lbl), run_time=0.6)
         self.wait(0.3)
 
-        res = VGroup(
-            Text("présentes PARTOUT  →  adresse n°0", font_size=24, color=COL_SCORE),
+        # Un trait par colonne, révélés l'un après l'autre (on « passe » sur
+        # chaque lettre). Vert = pareil, rouge = différent.
+        links = VGroup()
+        for i in range(n):
+            same_letter = typed_s[i] == index_s[i]
+            links.add(
+                Line(
+                    typed_chars[i].get_bottom() + DOWN * 0.06,
+                    index_chars[i].get_top() + UP * 0.06,
+                    color=COL_SCORE if same_letter else RED,
+                    stroke_width=4 if same_letter else 6,
+                )
+            )
+        self.play(LaggedStart(*[Create(l) for l in links], lag_ratio=0.4), run_time=2.2)
+        self.wait(0.3)
+
+        # La seule colonne qui diffère : encadrée des deux côtés.
+        diff_i = 3
+        db_t = SurroundingRectangle(typed_chars[diff_i], color=RED, buff=0.08)
+        db_i = SurroundingRectangle(index_chars[diff_i], color=COL_SCORE, buff=0.08)
+        self.play(Create(db_t), Create(db_i), run_time=0.6)
+        self.wait(0.4)
+
+        tally = Text(
+            "6 lettres identiques · 1 différente", font=MONO, font_size=22, color=GREY_A
+        )
+        tally.next_to(index_chars, DOWN, buff=0.6).set_x(0)
+        corr = Text("→ 1 seule correction", font=MONO, font_size=24, color=COL_SCORE)
+        corr.next_to(tally, DOWN, buff=0.22).set_x(0)
+        self.play(FadeIn(tally), run_time=0.5)
+        self.play(FadeIn(corr), run_time=0.5)
+        self.wait(0.8)
+
+        # --- C. la tolérance : 1 faute passe pour un mot long ----------------
+        tol = VGroup(
             Text(
-                "Impasse des Acacias 01310 Saint-Rémy",
-                font=MONO,
-                font_size=22,
-                color=COL_INDEX,
+                "mot de plus de 4 lettres : jusqu'à 2 fautes tolérées",
+                font_size=20,
+                color=GREY_A,
             ),
-        ).arrange(DOWN, buff=0.25)
-        res.next_to(rows, DOWN, buff=0.7).set_x(0)
-        self.play(FadeIn(res[0]), run_time=0.6)
-        self.play(FadeIn(res[1], shift=0.2 * UP), run_time=0.7)
+        ).arrange(DOWN, buff=0.2)
+        tol.next_to(corr, DOWN, buff=0.4).set_x(0)
+        self.play(FadeIn(tol[0]), run_time=0.6)
+        self.wait(1.2)
+        self.next_slide()  # pause sur la comparaison lettre à lettre (1 correction)
+
+        # --- D. adresse trouvée ----------------------------------------------
+        found_word = Text("acacias", font=MONO, font_size=46, color=COL_INDEX)
+        found_word.move_to(DOWN * 0.2)
+        self.play(
+            FadeOut(
+                VGroup(
+                    typed_chars,
+                    index_chars,
+                    typed_lbl,
+                    good_lbl,
+                    links,
+                    db_t,
+                    db_i,
+                    tally,
+                    corr,
+                    tol,
+                )
+            ),
+            FadeIn(found_word),
+            run_time=0.9,
+        )
+        found_box = SurroundingRectangle(found_word, color=COL_INDEX, buff=0.25)
+        found = Text("adresse trouvée", font=MONO, font_size=24, color=COL_INDEX)
+        found.next_to(found_box, DOWN, buff=0.4)
+        self.play(Create(found_box), FadeIn(found), run_time=1.0)
+        self.wait(2.0)
+        self.next_slide()  # pause sur « adresse trouvée »
+        self.play(*[FadeOut(m) for m in self.mobjects], run_time=1.0)
+
+    # --- A2. parcours de l'arbre du dico, façon chapitre 7 -------------------
+    def scene_parcours_arbre(self):
+        """Comme l'arbre du ch.7, mais on le PARCOURT avec la requête fautive
+        « acasias ». Tant que le compteur de fautes reste ≤ 2 on descend ;
+        une branche qui dépasse le budget est coupée. « acacias » est atteint
+        à 1 faute -> trouvé. Deux voisines (« acajou », « abricot ») sont
+        écartées : l'une après le budget, l'autre dès le début."""
+        sp = 0.92
+
+        def P(i, y):
+            return [-5.3 + i * sp, y, 0]
+
+        Y_MAIN, Y_SIB = 0.85, -0.75
+
+        # Chemin principal : a-c-a-c-i-a-s (le mot « acacias » de l'index).
+        main = [node(P(i, Y_MAIN), final=(i == 7)) for i in range(8)]
+        mlett = ["a", "c", "a", "c", "i", "a", "s"]
+        medges = [edge(main[i], main[i + 1], mlett[i], UP * 0.26) for i in range(7)]
+
+        # Voisine « acajou » : diverge après « aca » (état 3) -> j-o-u.
+        aca = [node(P(i, Y_SIB), final=(i == 6)) for i in (4, 5, 6)]
+        aedges = [
+            edge(main[3], aca[0], "j", DOWN * 0.22 + RIGHT * 0.12),
+            edge(aca[0], aca[1], "o", DOWN * 0.28),
+            edge(aca[1], aca[2], "u", DOWN * 0.28),
+        ]
+        # Voisine « abricot » : diverge dès la 2e lettre (état 1) -> b...
+        abr = node(P(2, Y_SIB))
+        bedge = edge(main[1], abr, "b", DOWN * 0.22 + LEFT * 0.12)
+
+        # Requête tapée, avec la faute (4e lettre) en rouge ; compteur de fautes.
+        q = (
+            Text(
+                "on descend l'arbre avec « acasias »",
+                font_size=22,
+                color=GREY_A,
+                t2c={"acasias": RED},
+            )
+            .next_to(self.sub, DOWN, buff=0.35)
+            .set_x(0)
+        )
+        badge = Text("fautes : 0", font=MONO, font_size=24, color=COL_TOK)
+        badge.move_to([4.7, 2.1, 0])
+
+        all_tree = VGroup(*main, *medges, *aca, *aedges, abr, bedge)
+        self.play(FadeIn(q), run_time=0.5)
+        self.play(
+            LaggedStart(*[FadeIn(m) for m in all_tree], lag_ratio=0.12), run_time=2.4
+        )
+        self.play(FadeIn(badge), run_time=0.4)
+        self.wait(0.4)
+
+        # Parcours du chemin principal, lettre par lettre. La 4e (index « c »
+        # contre requête « s ») est une faute : arête jaune + compteur à 1.
+        fautes = 0
+        self.play(main[0][0].animate.set_stroke(COL_TOK, width=5), run_time=0.25)
+        for i in range(7):
+            faute = i == 3
+            col = COL_SCORE if faute else COL_TOK
+            anims = [
+                medges[i][0].animate.set_color(col),
+                main[i + 1][0].animate.set_stroke(col if faute else COL_TOK, width=5),
+            ]
+            self.play(*anims, run_time=0.34)
+            if faute:
+                fautes = 1
+                new_badge = Text(
+                    "fautes : 1", font=MONO, font_size=24, color=COL_SCORE
+                ).move_to(badge)
+                self.play(Transform(badge, new_badge), run_time=0.4)
+        self.play(Flash(main[7], color=COL_TOK, flash_radius=0.55), run_time=0.6)
+        ok = Text(
+            "acacias — trouvé (1 faute ≤ 2)", font=MONO, font_size=21, color=COL_TOK
+        ).next_to(main[7], RIGHT, buff=0.3)
+        self.play(FadeIn(ok), run_time=0.5)
+        self.wait(1.0)
+        self.next_slide()  # pause sur « acacias trouvé (1 faute ≤ 2) »
+
+        # Voisine « acajou » : on l'explore aussi (1 faute au départ), mais les
+        # lettres suivantes accumulent -> on dépasse 2 -> branche coupée.
+        for e in aedges:
+            e[0].set_color(GREY_B)
+        for nd in aca:
+            nd[0].set_stroke(GREY_B)
+        cut_a = cut_mark(aedges[2][0].get_center())
+        lbl_a = Text(
+            "acajou — trop de fautes, coupée", font=MONO, font_size=19, color=GREY_B
+        ).next_to(aca[2], RIGHT, buff=0.3)
+        self.play(Create(cut_a), FadeIn(lbl_a), run_time=0.7)
         self.wait(0.6)
 
-        # Pourquoi l'adresse 1 tombe : « Rue des Acacias » n'a pas « impasse ».
-        why = Text(
-            "« Rue des Acacias » (n°1) écartée : pas de « impasse »",
-            font_size=18,
-            color=GREY_A,
+        # Voisine « abricot » : diverge dès le « b » -> écartée tout de suite.
+        bedge[0].set_color(GREY_B)
+        abr[0].set_stroke(GREY_B)
+        cut_b = cut_mark(bedge[0].get_center())
+        lbl_b = (
+            Text("abricot — coupée d'emblée", font=MONO, font_size=19, color=GREY_B)
+            .next_to(abr, DOWN, buff=0.25)
+            .set_x(P(2, 0)[0])
         )
-        why.next_to(res, DOWN, buff=0.4).set_x(0)
-        self.play(FadeIn(why), run_time=0.6)
-        self.wait(1.6)
+        self.play(Create(cut_b), FadeIn(lbl_b), run_time=0.7)
+        self.wait(1.4)
+        self.next_slide()  # pause sur les branches coupées (budget de fautes)
 
-        self.play(
-            FadeOut(VGroup(rust, rows, *flash, res, why)),
-            run_time=0.6,
-        )
+        scene_mobs = VGroup(q, badge, all_tree, ok, cut_a, lbl_a, cut_b, lbl_b)
+        self.play(FadeOut(scene_mobs), run_time=0.8)

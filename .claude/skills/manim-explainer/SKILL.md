@@ -16,9 +16,9 @@ description: >-
 Ce projet explique son moteur de recherche d'adresses avec de courtes
 animations Manim « grand public ». Des animations existent déjà dans
 `demo/animations/` et servent de référence vivante :
-`workflow_pipeline_ch1.py` … `workflow_pipeline_ch9.py` (le pipeline complet
-en 9 chapitres, du CSV au scoring). Cette skill capture leur style pour en
-produire de nouvelles, cohérentes entre elles.
+`workflow_pipeline_ch0.py` … `workflow_pipeline_ch10.py` (le pipeline complet
+en 11 clips : ch0 = vue d'ensemble, ch1–10 = les étapes, du CSV au scoring).
+Cette skill capture leur style pour en produire de nouvelles, cohérentes entre elles.
 
 ## Avant de commencer
 
@@ -29,7 +29,7 @@ de `TransformFromCopy`, l'alignement collinéaire...). Ne saute pas cette
 lecture : ces pièges reviennent à chaque animation.
 
 Regarde aussi le fichier de référence le plus proche de ton sujet :
-- transformation de texte étape par étape → `workflow_pipeline_ch4.py` (Ch4Normalisation)
+- transformation de texte étape par étape → `workflow_pipeline_ch3.py` (Ch3Normalisation)
 - flux de données / fichiers produits → `workflow_pipeline_ch7.py` (Ch7Fichiers)
 
 ## Registre par défaut : grand public
@@ -129,10 +129,10 @@ Récap des cibles existantes :
   coup par coup.
 
 **Film à chapitres (plusieurs Scenes + montage).** `workflow_pipeline.py` est la
-référence : 8 classes `Scene` (un chapitre = un clip), un montage continu via
+référence : 11 classes `Scene` (un chapitre = un clip), un montage continu via
 `concat_chapters.py` (concat PyAV, pas besoin d'un ffmpeg système). Ses cibles,
 à reproduire pour tout film de ce type :
-- `make anim-workflow` — rend les 8 chapitres (`manim -a`).
+- `make anim-workflow` — rend les 11 chapitres (`manim -a`).
 - `make anim-wf-<chapitre>` — un chapitre précis (`apercu`, `donnees`, … ) pour
   itérer sans rendre les autres.
 - `make anim-workflow-montage` — rend les chapitres puis monte le film continu.

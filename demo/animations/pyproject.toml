@@ -5,4 +5,7 @@ description = "Animations Manim explicatives du moteur de recherche BANO"
 requires-python = ">=3.9"
 # Manim est isolé ici (pas une dépendance du reste du monorepo). `uv run manim`
 # crée/synchronise automatiquement .venv depuis ce fichier au premier appel.
-dependencies = ["manim>=0.18"]
+dependencies = [
+    "manim>=0.18",
+    "manim-slides>=5.6.0",
+]
