@@ -1,0 +1,66 @@
+# ===================== Données BANO (lourdes, régénérables) =====================
+# Tout data/ est hors git : full.csv (2 Go), full.csv.gz (335 Mo), streets.csv.
+# Régénérable via `python -m dataprep`.
+data/
+# Mêmes fichiers s'ils traînent ailleurs (cache dataprep/, copie bench/v1 via
+# `make v1-data`, etc.) — tous régénérables.
+full.csv
+full.csv.gz
+streets.csv
+
+# ===================== Python =====================
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+.env
+
+# ===================== Rust =====================
+**/target/
+
+# ===================== Gradle / Android =====================
+**/build/
+**/.gradle/
+**/.cxx/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+local.properties
+
+# Artefacts générés de l'app demo (lib native + index FST)
+demo/android/app/src/main/jniLibs/
+demo/android/app/src/main/assets/index/
+# queries.json copié dans les assets par la tâche gradle copyBenchQueries (régénérable)
+demo/android/app/src/main/assets/bench/
+
+# ===================== Bench (artefacts régénérables) =====================
+# On GARDE bench/v2/shared/queries.json (jeu de requêtes reproductible).
+bench/*/shared/artifacts/
+bench/*/shared/android/
+bench/*/shared/fst/
+bench/*/reports/
+*.db
+*.db-wal
+*.db-shm
+*.parquet
+*.arrow
+*.fst
+postings.bin
+records.bin
+
+# ===================== Logs / IDE / OS =====================
+*.log
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*~
