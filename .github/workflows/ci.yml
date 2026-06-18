@@ -132,11 +132,11 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-
       - name: Dépendances système manim (pango, cairo, ffmpeg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y             build-essential pkg-config python3-dev             libcairo2-dev libpango1.0-dev libpangocairo-1.0-0             ffmpeg
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: build-essential pkg-config python3-dev libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 ffmpeg
+          version: 1.0
 
       - name: uv sync (projet animations)
         working-directory: demo/animations
