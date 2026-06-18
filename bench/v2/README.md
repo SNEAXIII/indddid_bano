@@ -8,13 +8,13 @@ sur les adresses BANO (triplets `voie, code_postal, ville`). Il mesure latence, 
 
 - Python ≥ 3.10
 - [uv](https://github.com/astral-sh/uv)
-- Un fichier `streets.csv` à l'entête `voie,code_postal,ville` (produit par
-  `utils/ExtractUniqueAddresses.py` à partir du fichier national BANO).
+- Un fichier `data/streets.csv` à l'entête `voie,code_postal,ville` (produit par
+  `dataprep/` à la racine, à partir du fichier national BANO ; `make data`).
 
 ## 📦 Installation
 
 ```bash
-cd new/desktop
+cd bench/v2
 uv sync          # crée .venv + installe pyarrow et pytest
 ```
 
@@ -28,16 +28,16 @@ uv sync          # crée .venv + installe pyarrow et pytest
 
 ```bash
 uv run python -m search_bench.queryset.generate \
-    -i /chemin/vers/streets.csv \
-    -o ../shared/queries.json \
+    -i ../../data/streets.csv \
+    -o shared/queries.json \
     -n 2000 \
     -s 42
 ```
 
 | Option | Défaut | Rôle |
 |---|---|---|
-| `-i, --input` | `../streets.csv` | CSV source |
-| `-o, --output` | `../shared/queries.json` | Jeu de requêtes labellisé |
+| `-i, --input` | `../../data/streets.csv` | CSV source |
+| `-o, --output` | `shared/queries.json` | Jeu de requêtes labellisé |
 | `-n, --n-targets` | `2000` | Nb d'adresses cibles échantillonnées |
 | `-s, --seed` | `42` | Graine (reproductible) |
 
@@ -48,16 +48,16 @@ Chaque cible génère **3 requêtes** : `prefix` (saisie en cours), `typo` (faut
 
 ```bash
 uv run python -m search_bench.bench.run \
-    -i /chemin/vers/streets.csv \
-    -q ../shared/queries.json \
+    -i ../../data/streets.csv \
+    -q shared/queries.json \
     -o reports \
     --limit 10
 ```
 
 | Option | Défaut | Rôle |
 |---|---|---|
-| `-i, --input` | `../streets.csv` | CSV source (le même qu'à l'étape 1) |
-| `-q, --queries` | `../shared/queries.json` | Jeu de requêtes |
+| `-i, --input` | `../../data/streets.csv` | CSV source (le même qu'à l'étape 1) |
+| `-q, --queries` | `shared/queries.json` | Jeu de requêtes |
 | `-o, --out-dir` | `reports` | Dossier de sortie |
 | `--limit` | `10` | Nb de résultats par requête |
 
@@ -82,15 +82,15 @@ le benchmark les **recharge** ensuite (mesure un `load ms` de cold-start distinc
 
 ```bash
 # 1. Construire tous les artefacts une fois (shared/artifacts/<moteur>/ + manifest.json)
-uv run python -m search_bench.prebuild -i ./streets.csv -o ../shared/artifacts
+uv run python -m search_bench.prebuild -i ../../data/streets.csv -o shared/artifacts
 
 # 2. Benchmarker en RECHARGEANT les artefacts (load au lieu de build)
-uv run python -m search_bench.bench.run --artifacts ../shared/artifacts -q ../shared/queries.json -o reports
+uv run python -m search_bench.bench.run --artifacts shared/artifacts -q shared/queries.json -o reports
 
 # 3. Exporter les survivantes en SQLite Android (lit reports/report.json -> survivors)
-uv run python -m search_bench.export_android -a ../shared/artifacts -r reports/report.json -o ../shared/android
+uv run python -m search_bench.export_android -a shared/artifacts -r reports/report.json -o shared/android
 #    ou survivantes explicites :
-uv run python -m search_bench.export_android -a ../shared/artifacts -s fts5_trigram inverted_index -o ../shared/android
+uv run python -m search_bench.export_android -a shared/artifacts -s fts5_trigram inverted_index -o shared/android
 ```
 
 Formats d'artefact : `parquet`/`arrow`/`db` natifs, index en RAM en `pickle` (desktop). L'export
@@ -183,7 +183,7 @@ dans les tests de contrat.*
 ## ✅ Tests
 
 ```bash
-uv run pytest -q        # 57 tests (normalisation, scoring, 9 moteurs, métriques, harness)
+uv run pytest -q        # 81 tests (normalisation, scoring, 9 moteurs, métriques, harness)
 ```
 
 ## 📈 Résultats de référence (France entière, 2,2 M adresses, 60 requêtes)

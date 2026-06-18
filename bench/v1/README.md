@@ -75,7 +75,7 @@ adresses(nom_voie, id_code_postal, id_nom_commune)  -- nom_voie non normalisé
 Le projet suit un **pattern Builder** avec héritage pour factoriser la logique commune.
 
 ```
-python_parser/
+bench/v1/
 ├── DatabaseBuilder/              # 💾 Builders SQLite
 │   ├── Interface/
 │   │   └── BANODatabaseBuilder.py      # Classe abstraite (gestion CSV, VACUUM, stats)
@@ -98,10 +98,9 @@ python_parser/
 │   ├── DatabaseCursor.py         # Wrapper SQLite avec PRAGMAs optimisés
 │   └── Perftime.py               # Décorateur @perf_time + PerfTimer context manager
 │
-├── nationalFile.csv              # 📂 Fichier source BANO (~15M lignes)
+├── streets.csv                   # 📂 CSV source (voie,cp,ville) produit par dataprep/
 ├── benchmark.py                  # 📊 Benchmark complet (SQLite + Parquet + Arrow)
-├── benchmark_parquet_vs_arrow.py # ⚡ Benchmark dédié Parquet vs Arrow
-└── pyproject.toml                # Configuration uv (pandas, pyarrow)
+└── pyproject.toml                # Configuration uv (pandas, pyarrow, duckdb)
 ```
 
 ### 🔑 Composants clés
@@ -172,13 +171,6 @@ uv run python -m ArrowBuilder.BANOArrowBuilderSimple
 uv run python benchmark.py
 ```
 
-#### Benchmark Parquet vs Arrow
-
-```bash
-# Compare spécifiquement Parquet et Arrow IPC
-uv run python benchmark_parquet_vs_arrow.py
-```
-
 Le benchmark affiche :
 - 📦 **Taille des fichiers** avec ratio comparatif
 - ⏱️ **Temps de lecture complète**
@@ -230,18 +222,15 @@ Exécutez tous les builders pour comparer :
 | **Arrow IPC**    | **~120 Mo**    | **Très rapide** | **Streaming, interopérabilité, Android** |
 
 > ⚠️ **Note** : Les valeurs exactes dépendent du jeu de données BANO utilisé.
-> 
-> 💡 **Voir [PARQUET_VS_ARROW.md](PARQUET_VS_ARROW.md)** pour une comparaison détaillée des formats.
 
 ## 🗂️ Structure du CSV BANO
 
-Le fichier `nationalFile.csv` contient les colonnes suivantes :
+Le fichier `streets.csv` (produit par `dataprep/`, en-tête `voie,code_postal,ville`)
+contient 3 colonnes, lues par index :
 
-- Colonne 0-1 : Identifiants
-- **Colonne 2** : Nom de la voie
-- **Colonne 3** : Code postal
-- **Colonne 4** : Nom de la commune
-- Colonnes 5+ : Autres données (coordonnées, etc.)
+- **Colonne 0** : Nom de la voie
+- **Colonne 1** : Code postal
+- **Colonne 2** : Nom de la commune
 
 ## 📝 Exemples de code
 

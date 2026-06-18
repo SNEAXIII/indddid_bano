@@ -30,18 +30,27 @@ L'application utilise la base SQLite `bano_no_joins_wo_rowid.db`.
 ## Structure du projet
 
 ```
-app/src/main/java/com/example/loginactivity/
+app/src/main/java/com/sneaxiii/banoparser/
+├── MainActivity.java                 # Activity hôte (bottom nav)
 ├── data/
+│   ├── AddressRepository.java        # Repository singleton
+│   ├── CSVAddressDataSource.java     # Source CSV (copie depuis assets)
+│   └── SQLiteAddressDataSource.java  # Source SQLite (bano_no_joins_wo_rowid.db)
+├── domain/
 │   ├── model/
-│   │   └── Address.java          # Modèle d'adresse
-│   ├── AddressDataSource.java    # Accès SQLite
-│   └── AddressRepository.java    # Repository singleton
+│   │   └── Address.java              # Modèle d'adresse
+│   └── repository/
+│       └── IAddressDataSource.java   # Interface de source de données
 └── ui/
-    └── search/
-        ├── SearchActivity.java       # Activity principale
-        ├── SearchViewModel.java      # ViewModel avec ExecutorService
-        ├── SearchViewModelFactory.java
-        └── AddressAdapter.java       # Adapter pour RecyclerView
+    ├── search/
+    │   ├── SearchFragment.java       # Recherche
+    │   ├── SearchViewModel.java      # ViewModel avec ExecutorService
+    │   ├── SearchViewModelFactory.java
+    │   └── AddressAdapter.java       # Adapter pour RecyclerView
+    ├── suggestions/
+    │   └── SuggestionsFragment.java  # Autocomplétion
+    └── benchmark/
+        └── BenchmarkFragment.java    # Mesures in-app
 ```
 
 ## Requirements

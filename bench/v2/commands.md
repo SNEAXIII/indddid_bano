@@ -1,15 +1,15 @@
-uv run python -m search_bench.bench.run -i ./streets.csv -q ../shared/queries.json -o reports --limit 10
+uv run python -m search_bench.bench.run -i ../../data/streets.csv -q shared/queries.json -o reports --limit 10
 
-uv run python -m search_bench.queryset.generate -i ./streets.csv -o ../shared/queries.json -n 2000 -s 42
+uv run python -m search_bench.queryset.generate -i ../../data/streets.csv -o shared/queries.json -n 2000 -s 42
 
 # --- Prebuild (construit les 9 artefacts UNE fois + manifest.json) ---
-uv run python -m search_bench.prebuild -i ./streets.csv -o ../shared/artifacts
+uv run python -m search_bench.prebuild -i ../../data/streets.csv -o shared/artifacts
 
 # --- Benchmark en RECHARGEANT les artefacts (load au lieu de build, affichage live) ---
-uv run python -m search_bench.bench.run --artifacts ../shared/artifacts -q ../shared/queries.json -o reports --limit 10
+uv run python -m search_bench.bench.run --artifacts shared/artifacts -q shared/queries.json -o reports --limit 10
 
 # --- Export Android des survivantes (lit reports/report.json -> survivors) ---
-uv run python -m search_bench.export_android -a ../shared/artifacts -r reports/report.json -o ../shared/android
+uv run python -m search_bench.export_android -a shared/artifacts -r reports/report.json -o shared/android
 
 Côté Android offline
 - « Android SQLite FTS search » / « Room full text search » — pour la partie embarquée.
