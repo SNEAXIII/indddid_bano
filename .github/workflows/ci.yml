@@ -81,7 +81,32 @@ jobs:
           path: data
           key: bano-data-v1
 
-      - name: assembleDebug (build l'index France entière puis l'APK)
+      - name: Décoder la keystore release
+        id: keystore
+        env:
+          KS_B64: ${{ secrets.BANO_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/bano-release.jks"
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: assembleRelease (index France entière + APK signé)
+        if: steps.keystore.outputs.present == 'true'
+        working-directory: demo/android
+        env:
+          BANO_KEYSTORE: ${{ runner.temp }}/bano-release.jks
+          BANO_KEYSTORE_PASSWORD: ${{ secrets.BANO_KEYSTORE_PASSWORD }}
+          BANO_KEY_ALIAS: ${{ secrets.BANO_KEY_ALIAS }}
+          BANO_KEY_PASSWORD: ${{ secrets.BANO_KEY_PASSWORD }}
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: assembleDebug (repli sans keystore)
+        if: steps.keystore.outputs.present == 'false'
         working-directory: demo/android
         run: |
           chmod +x ./gradlew
@@ -90,8 +115,8 @@ jobs:
       - name: Publier l'APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: demo/android/app/build/outputs/apk/debug/*.apk
+          name: app-apk
+          path: demo/android/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
 
   # ===================================================================
@@ -111,10 +136,7 @@ jobs:
       - name: Dépendances système manim (pango, cairo, ffmpeg)
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential pkg-config python3-dev \
-            libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 \
-            ffmpeg
+          sudo apt-get install -y             build-essential pkg-config python3-dev             libcairo2-dev libpango1.0-dev libpangocairo-1.0-0             ffmpeg
 
       - name: uv sync (projet animations)
         working-directory: demo/animations
@@ -197,5 +219,5 @@ jobs:
           prerelease: false
           fail_on_unmatched_files: true
           files: |
-            dist/app-debug-apk/*.apk
+            dist/app-apk/**/*.apk
             dist/videos/workflow_montage.mp4

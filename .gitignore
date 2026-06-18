@@ -34,6 +34,9 @@ captures/
 *.ap_
 *.dex
 local.properties
+# Keystore de signature release — JAMAIS commitée (secret).
+*.jks
+*.keystore
 
 # Artefacts générés de l'app demo (lib native + index FST)
 demo/android/app/src/main/jniLibs/
