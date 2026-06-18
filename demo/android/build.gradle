@@ -1,0 +1,7 @@
+// Plugins déclarés (et versionnés via le catalog) au niveau racine, appliqués
+// dans les modules. `apply false` : on ne les applique pas ici, juste on fige
+// leur version.
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.rust.android) apply false
+}

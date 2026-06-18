@@ -1,0 +1,126 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.rust.android)
+}
+
+// ===================== Brique Rust (bano-fst) =====================
+// Le plugin rust-android compile la crate en .so pour les ABIs ciblees et
+// alimente les jniLibs. `features { defaultAnd("jni") }` ajoute --features jni.
+cargo {
+    module   = "../../rust/bano-fst"   // relatif a app/
+    libname  = "bano_fst"
+    targets  = ["arm64", "x86_64"]
+    profile  = "release"
+    apiLevel = 30                       // = minSdk (Android 11)
+    // Active la feature JNI du crate (le pont jni_bridge.rs).
+    extraCargoBuildArguments = ['--features', 'jni']
+}
+
+// Le plugin rust-android (CargoBuildTask) appelle Task.project a l'execution,
+// interdit par le configuration cache. On opte ces taches hors du cache : le
+// reste du build le garde, seules les taches cargo le desactivent (warning,
+// plus d'echec). Voir https://github.com/mozilla/rust-android-gradle/issues
+tasks.matching { it.name.startsWith('cargoBuild') }.configureEach {
+    notCompatibleWithConfigurationCache("CargoBuildTask uses Task.project at execution time")
+}
+
+// ===================== Chaine data + index FST =====================
+// prepareData  : uv run python -m dataprep -> data/streets.csv (download si absent)
+// generateBanoIndex : cargo run -- build streets.csv -> assets/index/ (incremental)
+def repoRoot   = rootDir.parentFile.parentFile    // demo/android/ -> demo/ -> repo (monorepo root)
+def dataDir    = new File(repoRoot, "data")
+def streetsCsv = new File(dataDir, "streets.csv")
+def crateDir   = file("../../rust/bano-fst")
+def indexDir   = file("src/main/assets/index")
+
+tasks.register('prepareData', Exec) {
+    description = "Telecharge le BANO et extrait data/streets.csv (skip si present)."
+    outputs.file streetsCsv                       // up-to-date si streets.csv existe
+    workingDir new File(repoRoot, "dataprep")
+    commandLine 'uv', 'run', 'python', '-m', 'dataprep', '--out', streetsCsv.absolutePath
+}
+
+tasks.register('generateBanoIndex', Exec) {
+    description = "Construit l'index FST dans assets/index/ (skip si inchange)."
+    dependsOn 'prepareData'
+    inputs.file streetsCsv
+    inputs.dir new File(crateDir, "src")
+    outputs.dir indexDir
+    commandLine 'cargo', 'run', '--release',
+            '--manifest-path', new File(crateDir, "Cargo.toml").absolutePath,
+            '--', 'build', streetsCsv.absolutePath, indexDir.absolutePath
+}
+
+// Prébuild du FST Lucene depuis vocab.bin -> assets/index/lucene.fst.
+// Construit côté JVM (format Lucene, incompatible avec l'index.fst du Rust) ;
+// le FstMatcher le charge au lieu de reconstruire le FST en RAM à l'ouverture.
+tasks.register('generateLuceneFst') {
+    description = "Sérialise le FST Lucene (assets/index/lucene.fst) depuis vocab.bin."
+    dependsOn 'generateBanoIndex'
+    def vocabBin = new File(indexDir, "vocab.bin")
+    def fstOut   = new File(indexDir, "lucene.fst")
+    inputs.file vocabBin
+    outputs.file fstOut
+    doLast {
+        com.example.buildtools.LuceneFstBuilder.build(vocabBin.toPath(), fstOut.toPath())
+    }
+}
+
+def benchQueriesSrc = new File(repoRoot, "bench/v2/shared/queries.json")
+def benchAssetsDir  = file("src/main/assets/bench")
+
+tasks.register('copyBenchQueries', Copy) {
+    description = "Copie le jeu de requêtes labellisé dans assets/bench/."
+    from benchQueriesSrc
+    into benchAssetsDir
+}
+
+// L'index doit exister avant le merge des assets ; la .so avant le merge jniLibs.
+afterEvaluate {
+    tasks.named('preBuild').configure { it.dependsOn('generateBanoIndex', 'generateLuceneFst', 'copyBenchQueries') }
+    tasks.matching { it.name ==~ /merge.*JniLibFolders/ }.configureEach {
+        it.dependsOn('cargoBuild')
+    }
+}
+
+android {
+    namespace 'com.example.bano'
+    compileSdk 34
+    ndkVersion '27.0.12077973'   // NDK utilise par le plugin rust pour cross-compiler
+
+    defaultConfig {
+        applicationId 'com.example.bano'
+        minSdk 30          // Android 11
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+
+        // On n'embarque QUE les ABIs pour lesquelles on compile la lib Rust.
+        ndk {
+            abiFilters 'arm64-v8a', 'x86_64'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // App 100 % Java ; le kotlin-bom aligne kotlin-stdlib (tiré par AndroidX)
+    // sur une seule version -> évite les "Duplicate class" jdk7/jdk8.
+    implementation platform(libs.kotlin.bom)
+
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
+    implementation libs.lucene.core
+    testImplementation 'junit:junit:4.13.2'
+}

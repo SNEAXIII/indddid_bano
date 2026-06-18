@@ -1,0 +1,13 @@
+// buildSrc : outils de build JVM (hors APK). Ici, le prébuild du FST Lucene.
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Même version que l'app (compatible ART) — sert au build du .fst, pas embarquée.
+    implementation 'org.apache.lucene:lucene-core:8.11.2'
+}

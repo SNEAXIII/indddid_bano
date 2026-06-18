@@ -1,0 +1,21 @@
+# --- Gradle / Android (artefacts régénérables, machine-spécifiques) ---
+.gradle/
+build/
+/local.properties
+.cxx/
+captures/
+
+# IDE
+.idea/
+
+# Sorties d'app
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Lib native Rust (produite par `make android-lib`)
+/app/src/main/jniLibs/
+
+# Index FST des assets (volumineux ~142 Mo, régénérable via `make android-index`)
+/app/src/main/assets/index/
