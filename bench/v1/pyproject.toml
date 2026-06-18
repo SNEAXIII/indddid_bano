@@ -1,0 +1,13 @@
+[project]
+name = "bano-python-parser"
+version = "0.1.0"
+description = "Scripts de parsing BANO (CSV -> SQLite/Parquet)"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas",
+  "pyarrow",
+  "duckdb"
+]
+
+[tool.uv]
+# Projet orienté scripts: pas de packaging/build.

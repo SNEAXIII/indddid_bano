@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">BANO Search</string>
+    <!-- Strings related to address search -->
+    <string name="search_title">Recherche d\'adresses</string>
+    <string name="hint_street">Voie</string>
+    <string name="hint_postal_code">Code postal</string>
+    <string name="hint_city">Ville</string>
+    <string name="action_search">Rechercher</string>
+    <string name="action_export_csv">Exporter CSV</string>
+    <string name="no_results">Aucun résultat trouvé</string>
+    <string name="search_error">Erreur lors de la recherche</string>
+
+    <!-- Bottom navigation -->
+    <string name="title_search">Recherche</string>
+    <string name="title_suggestions">Suggestions</string>
+    <string name="title_benchmark">Benchmark</string>
+    <string name="benchmark_placeholder">Benchmark</string>
+    <string name="suggestions_placeholder">Suggestions</string>
+</resources>
