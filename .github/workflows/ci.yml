@@ -1,0 +1,169 @@
+name: CI
+
+# Deux jobs INDÉPENDANTS qui tournent en parallèle :
+#   - android : build de l'APK debug (Rust + index + Gradle)
+#   - videos  : rendu des 8 chapitres Manim + montage continu
+# Chacun publie son artefact de run (APK / zip de vidéos). Pas de Release.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Annule un run précédent encore en cours sur la même réf (push successifs).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ===================================================================
+  # Job 1 — Build de l'application Android (APK debug)
+  # ===================================================================
+  android:
+    name: Build APK Android
+    runs-on: ubuntu-latest
+    # BANO complet : download + extraction + index France entière puis build.
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17 (requis par AGP 8.5)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      # uv : la tâche Gradle `prepareData` lance `uv run python -m dataprep`.
+      # Comme on fournit data/streets.csv plus bas, dataprep ne télécharge rien.
+      - name: uv (pour dataprep)
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: uv sync (projet dataprep)
+        working-directory: dataprep
+        run: uv sync
+
+      # Le plugin mozilla rust-android-gradle cross-compile la crate : il faut
+      # les cibles Android côté rustup (pas de cargo-ndk nécessaire).
+      - name: Rust + cibles Android
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,x86_64-linux-android
+
+      - name: Cache cargo (crate bano-fst)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: demo/rust/bano-fst
+
+      - name: Android SDK (cmdline-tools + licences)
+        uses: android-actions/setup-android@v3
+
+      - name: NDK + platform + build-tools
+        run: |
+          sdkmanager "ndk;27.0.12077973" "platforms;android-34" "build-tools;34.0.0"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> "$GITHUB_ENV"
+
+      # BANO COMPLET : on laisse `prepareData` (Gradle) télécharger full.csv.gz
+      # depuis bano.openstreetmap.fr et extraire streets.csv (France entière,
+      # ~2,2 M voies uniques). dataprep lit le .gz en streaming (pas de 2 Go sur
+      # disque). Le cache évite de re-télécharger l'archive à chaque run :
+      #   - data/full.csv.gz : l'archive téléchargée (réutilisée si présente) ;
+      #   - data/streets.csv : extraction (re-skippée si présente).
+      # Bumper la clé (v1 -> v2) pour forcer un rafraîchissement du BANO.
+      - name: Cache données BANO (full.csv.gz + streets.csv)
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: bano-data-v1
+
+      - name: assembleDebug (build l'index France entière puis l'APK)
+        working-directory: demo/android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Publier l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: demo/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+  # ===================================================================
+  # Job 2 — Rendu des vidéos d'explication (Manim) + montage
+  # ===================================================================
+  videos:
+    name: Rendu vidéos workflow
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Dépendances système manim (pango, cairo, ffmpeg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential pkg-config python3-dev \
+            libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 \
+            ffmpeg
+
+      - name: uv sync (projet animations)
+        working-directory: demo/animations
+        run: uv sync
+
+      # Les anims codent en dur la police « Consolas » (Windows). Sur Linux on
+      # l'aliase vers DejaVu Sans Mono (toujours installée) pour garder le rendu
+      # monospace au lieu d'un fallback sans-serif.
+      - name: Alias police Consolas → DejaVu Sans Mono
+        run: |
+          mkdir -p "$HOME/.config/fontconfig"
+          cat > "$HOME/.config/fontconfig/fonts.conf" <<'XML'
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+          <fontconfig>
+            <alias>
+              <family>Consolas</family>
+              <prefer><family>DejaVu Sans Mono</family></prefer>
+            </alias>
+          </fontconfig>
+          XML
+          fc-cache -f
+
+      # Cache des « partial movie files » de Manim : une anim inchangée n'est
+      # pas re-rendue (cache natif, hash par animation). On persiste donc le
+      # dossier de rendu entre runs. La clé inclut le hash du code anim + uv.lock
+      # (version de Manim) ; restore-keys permet une réutilisation partielle
+      # (Manim ne re-rend que les anims dont le hash a bougé).
+      - name: Cache rendus Manim (partial movie files)
+        uses: actions/cache@v4
+        with:
+          path: demo/animations/media/videos/workflow_pipeline
+          key: manim-${{ runner.os }}-${{ hashFiles('demo/animations/workflow_pipeline.py', 'demo/animations/anim_common.py', 'demo/animations/uv.lock') }}
+          restore-keys: |
+            manim-${{ runner.os }}-
+
+      - name: Rendre les 8 chapitres (1080p60)
+        working-directory: demo/animations
+        run: uv run manim -qh -a workflow_pipeline.py
+
+      - name: Monter le film continu
+        working-directory: demo/animations
+        run: uv run python concat_chapters.py 1080p60
+
+      - name: Publier les vidéos (montage + chapitres)
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos
+          path: |
+            demo/animations/media/workflow_montage.mp4
+            demo/animations/media/videos/workflow_pipeline/1080p60/*.mp4
+          if-no-files-found: error
