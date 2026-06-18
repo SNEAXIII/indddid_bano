@@ -1,0 +1,26 @@
+[package]
+name = "bano-fst"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "bano_fst"
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "bano-fst"
+path = "src/main.rs"
+
+[dependencies]
+fst = { version = "0.4", features = ["levenshtein"] }
+memmap2 = "0.9"
+csv = "1"
+unicode-normalization = "0.1"
+jni = { version = "0.21", optional = true }
+
+[features]
+jni = ["dep:jni"]
+
+[profile.release]
+opt-level = 3
+lto = true

@@ -1,0 +1,6 @@
+# Dossier de compilation Cargo (binaires, objets intermédiaires) : ne jamais versionner.
+/target
+
+# Artefacts binaires éventuellement écrits DANS le crate (normalement on les met dans /tmp).
+*.fst
+*.bin
