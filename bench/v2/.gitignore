@@ -1,0 +1,8 @@
+artifacts/
+*.db
+*.db-wal
+*.db-shm
+*.parquet
+*.arrow
+__pycache__/
+.venv/

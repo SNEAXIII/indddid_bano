@@ -1,0 +1,2252 @@
+[
+  {
+    "query": "avenue",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Avenue de Narbonne",
+      "code_postal": "11130",
+      "ville": "Sigean"
+    }
+  },
+  {
+    "query": "rqe",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Rue du Lavoir",
+      "code_postal": "02220",
+      "ville": "Cerseuil"
+    }
+  },
+  {
+    "query": "place",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Place Ledru-Rollin",
+      "code_postal": "11200",
+      "ville": "Lézignan-Corbières"
+    }
+  },
+  {
+    "query": "cvemin",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Chemin du Canal",
+      "code_postal": "05400",
+      "ville": "La Roche-des-Arnauds"
+    }
+  },
+  {
+    "query": "route",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Route de saint julien",
+      "code_postal": "07160",
+      "ville": "Belsentes"
+    }
+  },
+  {
+    "query": "pnace",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Place de Planevert",
+      "code_postal": "03600",
+      "ville": "Commentry"
+    }
+  },
+  {
+    "query": "chemin",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Chemin des Charbonnieux",
+      "code_postal": "07150",
+      "ville": "Labastide-de-Virac"
+    }
+  },
+  {
+    "query": "lv",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "La Tuilerie",
+      "code_postal": "11220",
+      "ville": "Taurize"
+    }
+  },
+  {
+    "query": "ferme",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Ferme de Bruxelle",
+      "code_postal": "02570",
+      "ville": "La Chapelle-sur-Chézy"
+    }
+  },
+  {
+    "query": "cheimn",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Chemin de la Joannade",
+      "code_postal": "07700",
+      "ville": "Bourg-Saint-Andéol"
+    }
+  },
+  {
+    "query": "rouet",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Route d'Ugolin",
+      "code_postal": "13124",
+      "ville": "Peypin"
+    }
+  },
+  {
+    "query": "rue",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Rue des Grands Saulzets",
+      "code_postal": "03500",
+      "ville": "Contigny"
+    }
+  },
+  {
+    "query": "chemn",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Chemin des Hautes Ribes",
+      "code_postal": "06130;06520",
+      "ville": "Grasse"
+    }
+  },
+  {
+    "query": "impasse",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Impasse du Four",
+      "code_postal": "04220",
+      "ville": "Sainte-Tulle"
+    }
+  },
+  {
+    "query": "xlace",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Place Augustin Memin",
+      "code_postal": "02400",
+      "ville": "Essômes-sur-Marne"
+    }
+  },
+  {
+    "query": "quartier",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Quartier Las Usclados",
+      "code_postal": "09310",
+      "ville": "Bouan"
+    }
+  },
+  {
+    "query": "iqpasse",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Impasse de la Luc",
+      "code_postal": "03390",
+      "ville": "Saint-Marcel-en-Murat"
+    }
+  },
+  {
+    "query": "rout",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Route de Rivecave",
+      "code_postal": "12430",
+      "ville": "Le Truel"
+    }
+  },
+  {
+    "query": "cmemin",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Chemin des Grandes Rentes",
+      "code_postal": "16250",
+      "ville": "Étriac"
+    }
+  },
+  {
+    "query": "reu",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Rue de la Chapelle",
+      "code_postal": "11560",
+      "ville": "Fleury"
+    }
+  },
+  {
+    "query": "chein",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Chemin de Couéchot",
+      "code_postal": "09130",
+      "ville": "Le Fossat"
+    }
+  },
+  {
+    "query": "quai",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Quai de la Hille",
+      "code_postal": "11500",
+      "ville": "Quillan"
+    }
+  },
+  {
+    "query": "chemni",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Chemin de la Vieille Rivière",
+      "code_postal": "01460",
+      "ville": "Port"
+    }
+  },
+  {
+    "query": "plae",
+    "kind": "typo",
+    "words": 1,
+    "target": {
+      "voie": "Place Jean Jaurès",
+      "code_postal": "07350",
+      "ville": "Cruas"
+    }
+  },
+  {
+    "query": "derriere",
+    "kind": "prefix",
+    "words": 1,
+    "target": {
+      "voie": "Derriere l'Étang de Presle",
+      "code_postal": "10270",
+      "ville": "Laubressel"
+    }
+  },
+  {
+    "query": "allee des",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Allée des Séquoias",
+      "code_postal": "06250",
+      "ville": "Mougins"
+    }
+  },
+  {
+    "query": "aevnue antoine",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Avenue Antoine Gayraud",
+      "code_postal": "11170",
+      "ville": "Alzonne"
+    }
+  },
+  {
+    "query": "rue des",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Rue des Lilas",
+      "code_postal": "03330",
+      "ville": "Bellenaves"
+    }
+  },
+  {
+    "query": "boulevard gambetta",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Boulevard Gambetta",
+      "code_postal": "02700",
+      "ville": "Tergnier"
+    }
+  },
+  {
+    "query": "rue de",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Rue de la Tuilerie",
+      "code_postal": "02500",
+      "ville": "Any-Martin-Rieux"
+    }
+  },
+  {
+    "query": "saint carrefour",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Carrefour Saint-Éloi",
+      "code_postal": "12000",
+      "ville": "Rodez"
+    }
+  },
+  {
+    "query": "impasse les",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Impasse les Sarrazines",
+      "code_postal": "04190",
+      "ville": "Les Mées"
+    }
+  },
+  {
+    "query": "alle eclaude",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Allée Claude Debussy",
+      "code_postal": "13880",
+      "ville": "Velaux"
+    }
+  },
+  {
+    "query": "rue antoine",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Rue Antoine de Saint-Exupéry",
+      "code_postal": "16380",
+      "ville": "Chazelles"
+    }
+  },
+  {
+    "query": "route de",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Route de Vives",
+      "code_postal": "09110",
+      "ville": "Mérens-les-Vals"
+    }
+  },
+  {
+    "query": "rue caden",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Rue Cadène",
+      "code_postal": "11580",
+      "ville": "Alet-les-Bains"
+    }
+  },
+  {
+    "query": "route 1562",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "1562 Route de Davézieux",
+      "code_postal": "07430",
+      "ville": "Vernosc-lès-Annonay"
+    }
+  },
+  {
+    "query": "chemin des",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Chemin des Rivières",
+      "code_postal": "14570",
+      "ville": "Saint-Rémy"
+    }
+  },
+  {
+    "query": "impasse piere",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Impasse Pierre de Coubertin",
+      "code_postal": "11130",
+      "ville": "Sigean"
+    }
+  },
+  {
+    "query": "chemin du",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Chemin du Villard",
+      "code_postal": "01370",
+      "ville": "Val-Revermont"
+    }
+  },
+  {
+    "query": "rue sxint",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Rue Saint-Jérôme",
+      "code_postal": "09110",
+      "ville": "Ax-les-Thermes"
+    }
+  },
+  {
+    "query": "de impasse",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Impasse de Saint-Rames",
+      "code_postal": "12220",
+      "ville": "Vaureilles"
+    }
+  },
+  {
+    "query": "impasse du",
+    "kind": "prefix",
+    "words": 2,
+    "target": {
+      "voie": "Impasse du Docteur Louis Mallet",
+      "code_postal": "15000",
+      "ville": "Aurillac"
+    }
+  },
+  {
+    "query": "rue u",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Rue du Culot",
+      "code_postal": "08290",
+      "ville": "Prez"
+    }
+  },
+  {
+    "query": "georges avenue",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Avenue Georges Géhanne",
+      "code_postal": "14140",
+      "ville": "Mézidon Vallée d'Auge"
+    }
+  },
+  {
+    "query": "bosredon 15p00",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Bosredon",
+      "code_postal": "15600",
+      "ville": "Boisset"
+    }
+  },
+  {
+    "query": "chemin de",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Chemin de la Vacherie",
+      "code_postal": "01120",
+      "ville": "Sainte-Croix"
+    }
+  },
+  {
+    "query": "les nvoaines",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Les Novaines",
+      "code_postal": "06440",
+      "ville": "Peillon"
+    }
+  },
+  {
+    "query": "rpe de",
+    "kind": "typo",
+    "words": 2,
+    "target": {
+      "voie": "Rue de la Chapelle",
+      "code_postal": "07300",
+      "ville": "Tournon-sur-Rhône"
+    }
+  },
+  {
+    "query": "des rue",
+    "kind": "shuffle",
+    "words": 2,
+    "target": {
+      "voie": "Rue des 3 Fontaines",
+      "code_postal": "15100",
+      "ville": "Vabres"
+    }
+  },
+  {
+    "query": "voie de la",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Voie de la Fontaine d'Anjou",
+      "code_postal": "14130",
+      "ville": "Saint-Philbert-des-Champs"
+    }
+  },
+  {
+    "query": "ru de la",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Rue de la Croix-Saint-Fiacre",
+      "code_postal": "03110",
+      "ville": "Charmeil"
+    }
+  },
+  {
+    "query": "du impasse vieux",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Impasse du Vieux Four",
+      "code_postal": "15250",
+      "ville": "Reilhac"
+    }
+  },
+  {
+    "query": "boulevard des cretes",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Boulevard des Crêtes",
+      "code_postal": "06210",
+      "ville": "Mandelieu-la-Napoule"
+    }
+  },
+  {
+    "query": "ru edes ecoles",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Rue des Écoles",
+      "code_postal": "09100",
+      "ville": "La Tour-du-Crieu"
+    }
+  },
+  {
+    "query": "route de fraisse",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Route de Fraisse-Cabardès",
+      "code_postal": "11600",
+      "ville": "Aragon"
+    }
+  },
+  {
+    "query": "route du dolmen",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Route du Dolmen",
+      "code_postal": "09220",
+      "ville": "Val-de-Sos"
+    }
+  },
+  {
+    "query": "rue montpensie r01990",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Rue Montpensier",
+      "code_postal": "01990",
+      "ville": "Saint-Trivier-sur-Moignans"
+    }
+  },
+  {
+    "query": "rue clos du",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Rue du Clos Saint-Pierre",
+      "code_postal": "14610",
+      "ville": "Anisy"
+    }
+  },
+  {
+    "query": "chemin de la",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Chemin de la Borie",
+      "code_postal": "13821",
+      "ville": "La Penne-sur-Huveaune"
+    }
+  },
+  {
+    "query": "chemin des pelisisers",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Chemin des Pelissiers",
+      "code_postal": "12640",
+      "ville": "La Cresse"
+    }
+  },
+  {
+    "query": "nicolas place saint",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Place Saint-Nicolas",
+      "code_postal": "03140",
+      "ville": "Chantelle"
+    }
+  },
+  {
+    "query": "rue de rhounet",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Rue de Rhounet",
+      "code_postal": "12360",
+      "ville": "Camarès"
+    }
+  },
+  {
+    "query": "chemin des restaniues",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Chemin des Restanques",
+      "code_postal": "13390",
+      "ville": "Auriol"
+    }
+  },
+  {
+    "query": "sources des rue",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Rue des Sources",
+      "code_postal": "01000",
+      "ville": "Bourg-en-Bresse"
+    }
+  },
+  {
+    "query": "chemin de saint",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Chemin de Saint-Philippe le Bas",
+      "code_postal": "07400",
+      "ville": "Alba-la-Romaine"
+    }
+  },
+  {
+    "query": "lieu dit cheeaux",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Lieu Dit Chéreaux",
+      "code_postal": "03370",
+      "ville": "Courçais"
+    }
+  },
+  {
+    "query": "passage du tailleur",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Passage du Tailleur de Pierres",
+      "code_postal": "12400",
+      "ville": "Saint-Victor-et-Melvieu"
+    }
+  },
+  {
+    "query": "rue les chalencons",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "rue les Chalencons",
+      "code_postal": "07580",
+      "ville": "Saint-Pons"
+    }
+  },
+  {
+    "query": "lotissement le clos",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Lotissement le Clos de l’Ecluse",
+      "code_postal": "02400",
+      "ville": "Mont-Saint-Père"
+    }
+  },
+  {
+    "query": "ecureuils des impasse",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Impasse des Écureuils",
+      "code_postal": "16460",
+      "ville": "Aunac-sur-Charente"
+    }
+  },
+  {
+    "query": "chemin des picholines",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Chemin des Picholines",
+      "code_postal": "06650",
+      "ville": "Opio"
+    }
+  },
+  {
+    "query": "rue d ela",
+    "kind": "typo",
+    "words": 3,
+    "target": {
+      "voie": "Rue de la Rougeante",
+      "code_postal": "11200",
+      "ville": "Ornaisons"
+    }
+  },
+  {
+    "query": "rue longue 06620",
+    "kind": "shuffle",
+    "words": 3,
+    "target": {
+      "voie": "Rue Longue",
+      "code_postal": "06620",
+      "ville": "Cipières"
+    }
+  },
+  {
+    "query": "place de l",
+    "kind": "prefix",
+    "words": 3,
+    "target": {
+      "voie": "Place de l'Ecole",
+      "code_postal": "12720",
+      "ville": "Veyreau"
+    }
+  },
+  {
+    "query": "rue chailloux 03390 montmarault",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Rue Chailloux",
+      "code_postal": "03390",
+      "ville": "Montmarault"
+    }
+  },
+  {
+    "query": "impasse de la frigoul",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Impasse de la Frigoule",
+      "code_postal": "11200",
+      "ville": "Bizanet"
+    }
+  },
+  {
+    "query": "valette la de chemin",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Chemin de la Valette",
+      "code_postal": "14340",
+      "ville": "Manerbe"
+    }
+  },
+  {
+    "query": "lotissement le clos trevaresse",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Lotissement le Clos Trevaresse",
+      "code_postal": "13840",
+      "ville": "Rognes"
+    }
+  },
+  {
+    "query": "rue de dublin 14380",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Rue de Dublin",
+      "code_postal": "13480",
+      "ville": "Cabriès"
+    }
+  },
+  {
+    "query": "hugo 11160 rue victor",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Rue Victor Hugo",
+      "code_postal": "11160",
+      "ville": "Trassanel"
+    }
+  },
+  {
+    "query": "impasse des lilas 13200",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Impasse des Lilas",
+      "code_postal": "13200",
+      "ville": "Arles"
+    }
+  },
+  {
+    "query": "chemin de l astation",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Chemin de la Station",
+      "code_postal": "05000",
+      "ville": "Neffes"
+    }
+  },
+  {
+    "query": "rue l abbaye de",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Rue de l'Abbaye",
+      "code_postal": "12550",
+      "ville": "Plaisance"
+    }
+  },
+  {
+    "query": "chemin de la croisette",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Chemin de la Croisette",
+      "code_postal": "02300",
+      "ville": "Pierremande"
+    }
+  },
+  {
+    "query": "rue des anciens combatatnts",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "rue des Anciens Combattants Afrique du Nord",
+      "code_postal": "13640",
+      "ville": "La Roque-d'Anthéron"
+    }
+  },
+  {
+    "query": "chenets 02310 les nogent",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Les Chenets",
+      "code_postal": "02310",
+      "ville": "Nogent-l'Artaud"
+    }
+  },
+  {
+    "query": "rue colonel gassin 06000;06100;06200;06300",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Rue Colonel Gassin",
+      "code_postal": "06000;06100;06200;06300",
+      "ville": "Nice"
+    }
+  },
+  {
+    "query": "ure des halles 14160",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Rue des Halles",
+      "code_postal": "14160",
+      "ville": "Dives-sur-Mer"
+    }
+  },
+  {
+    "query": "13113 cadenieres des chemin",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Chemin des Cadenières",
+      "code_postal": "13113",
+      "ville": "Lamanon"
+    }
+  },
+  {
+    "query": "chemin du moulin 16560",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Chemin du Moulin",
+      "code_postal": "16560",
+      "ville": "Aussac-Vadalle"
+    }
+  },
+  {
+    "query": "impasoe des bambous 13008",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Impasse des Bambous",
+      "code_postal": "13008",
+      "ville": "Marseille 8e Arrondissement"
+    }
+  },
+  {
+    "query": "avenue chateau du 11300",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Avenue du Château",
+      "code_postal": "11300",
+      "ville": "Castelreng"
+    }
+  },
+  {
+    "query": "rue du pont vieux",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Rue du Pont Vieux",
+      "code_postal": "11140",
+      "ville": "Axat"
+    }
+  },
+  {
+    "query": "chemin de sviolieres 01190",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Chemin des Violières",
+      "code_postal": "01190",
+      "ville": "Saint-Étienne-sur-Reyssouze"
+    }
+  },
+  {
+    "query": "du marie lotissement terme",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Lotissement du Terme Marie",
+      "code_postal": "08350",
+      "ville": "Donchery"
+    }
+  },
+  {
+    "query": "rue de l arbousier",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Rue de l'Arbousier",
+      "code_postal": "13300",
+      "ville": "Salon-de-Provence"
+    }
+  },
+  {
+    "query": "residnce les tenilles 2",
+    "kind": "typo",
+    "words": 4,
+    "target": {
+      "voie": "Résidence Les Tenilles 2",
+      "code_postal": "11560",
+      "ville": "Fleury"
+    }
+  },
+  {
+    "query": "la roziere impasse de",
+    "kind": "shuffle",
+    "words": 4,
+    "target": {
+      "voie": "Impasse de la Roziere Haute",
+      "code_postal": "12170",
+      "ville": "La Selve"
+    }
+  },
+  {
+    "query": "rue du 23eme regiment",
+    "kind": "prefix",
+    "words": 4,
+    "target": {
+      "voie": "Rue du 23ème Régiment M.v.e. 1940",
+      "code_postal": "02200",
+      "ville": "Saconin-et-Breuil"
+    }
+  },
+  {
+    "query": "chemin de la bardeliere 14690",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Chemin de la Bardelière",
+      "code_postal": "14690",
+      "ville": "Les Isles-Bardel"
+    }
+  },
+  {
+    "query": "chemin des filtres 12500 esaplion",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Chemin des Filtres",
+      "code_postal": "12500",
+      "ville": "Espalion"
+    }
+  },
+  {
+    "query": "du chassemy 02370 rue pressoir",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Rue du Pressoir",
+      "code_postal": "02370",
+      "ville": "Chassemy"
+    }
+  },
+  {
+    "query": "rue des aigrettes 07320 saint",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Rue des Aigrettes",
+      "code_postal": "07320",
+      "ville": "Saint-Agrève"
+    }
+  },
+  {
+    "query": "rue de fontanett e01250 revonnas",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Rue de Fontanette",
+      "code_postal": "01250",
+      "ville": "Revonnas"
+    }
+  },
+  {
+    "query": "greze chemin 07700 de la",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Chemin de la Grèze",
+      "code_postal": "07700",
+      "ville": "Saint-Just-d'Ardèche"
+    }
+  },
+  {
+    "query": "impasse de la foret 03170",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Impasse de la Forêt",
+      "code_postal": "03170",
+      "ville": "Saint-Angel"
+    }
+  },
+  {
+    "query": "rue du faubuorg ratonneau 04210",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Rue du Faubourg Ratonneau",
+      "code_postal": "04210",
+      "ville": "Valensole"
+    }
+  },
+  {
+    "query": "de 08320 brasserie la rue",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Rue de la Brasserie",
+      "code_postal": "08320",
+      "ville": "Vireux-Wallerand"
+    }
+  },
+  {
+    "query": "chemin du merdancon 07230 chandolas",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Chemin du Merdançon",
+      "code_postal": "07230",
+      "ville": "Chandolas"
+    }
+  },
+  {
+    "query": "rue de la clade 11600",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Rue de la Calade",
+      "code_postal": "11600",
+      "ville": "Sallèles-Cabardès"
+    }
+  },
+  {
+    "query": "eglise l de rue 01340",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Rue de l'Église",
+      "code_postal": "01340",
+      "ville": "Bresse Vallons"
+    }
+  },
+  {
+    "query": "piste de l’albarea 06380 sospel",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Piste de l’Albarea",
+      "code_postal": "06380",
+      "ville": "Sospel"
+    }
+  },
+  {
+    "query": "rue de seena 04140 seyne",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Rue de Sédena",
+      "code_postal": "04140",
+      "ville": "Seyne"
+    }
+  },
+  {
+    "query": "de 02100 harly rue picardie",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Rue de Picardie",
+      "code_postal": "02100",
+      "ville": "Harly"
+    }
+  },
+  {
+    "query": "place de l eglise 01510",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Place de l'Église",
+      "code_postal": "01510",
+      "ville": "Armix"
+    }
+  },
+  {
+    "query": "lieu dti les charves 03130",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Lieu Dit les Charves",
+      "code_postal": "03130",
+      "ville": "Bert"
+    }
+  },
+  {
+    "query": "de pey tour la chemin",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Chemin de la Tour Pey Blanc",
+      "code_postal": "13090",
+      "ville": "Aix-en-Provence"
+    }
+  },
+  {
+    "query": "marlhin 07240 vernoux en vivarais",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Marlhin",
+      "code_postal": "07240",
+      "ville": "Vernoux-en-Vivarais"
+    }
+  },
+  {
+    "query": "rue suzanne dutsch de la",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Rue Suzanne Deutsch de la Meurthe",
+      "code_postal": "02100",
+      "ville": "Saint-Quentin"
+    }
+  },
+  {
+    "query": "15130 de tour teissieres bourg",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Tour de Bourg",
+      "code_postal": "15130",
+      "ville": "Teissières-lès-Bouliès"
+    }
+  },
+  {
+    "query": "mauvesin 03250 le mayet de",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Mauvesin",
+      "code_postal": "03250",
+      "ville": "Le Mayet-de-Montagne"
+    }
+  },
+  {
+    "query": "rue db 19 mars 1962",
+    "kind": "typo",
+    "words": 5,
+    "target": {
+      "voie": "Rue du 19 Mars 1962",
+      "code_postal": "14120",
+      "ville": "Mondeville"
+    }
+  },
+  {
+    "query": "15700 mars du rue 19",
+    "kind": "shuffle",
+    "words": 5,
+    "target": {
+      "voie": "Rue du 19 Mars",
+      "code_postal": "15700",
+      "ville": "Ally"
+    }
+  },
+  {
+    "query": "impasse du mas 07200 ailhon",
+    "kind": "prefix",
+    "words": 5,
+    "target": {
+      "voie": "Impasse du Mas",
+      "code_postal": "07200",
+      "ville": "Ailhon"
+    }
+  },
+  {
+    "query": "rue des trois mages 13001 marseille",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Rue des Trois Mages",
+      "code_postal": "13001",
+      "ville": "Marseille 6e Arrondissement"
+    }
+  },
+  {
+    "query": "le viger 15600 saint etienne de",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Le Vigier",
+      "code_postal": "15600",
+      "ville": "Saint-Étienne-de-Maurs"
+    }
+  },
+  {
+    "query": "malpel plaine de la 11240 lignairolles",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "La Plaine de Malpel",
+      "code_postal": "11240",
+      "ville": "Lignairolles"
+    }
+  },
+  {
+    "query": "rue madame henri spriet 14880 hermanville",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Rue Madame Henri Spriet",
+      "code_postal": "14880",
+      "ville": "Hermanville-sur-Mer"
+    }
+  },
+  {
+    "query": "ancien chemin de verquieres d2n 13550",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Ancien Chemin de Verquières D29",
+      "code_postal": "13550",
+      "ville": "Noves"
+    }
+  },
+  {
+    "query": "des pont chemin 14690 coursieres d",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "Chemin des Coursières",
+      "code_postal": "14690",
+      "ville": "Pont-d'Ouilly"
+    }
+  },
+  {
+    "query": "rue cornil d anval 03300 cusset",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Rue Cornil d'Anval",
+      "code_postal": "03300",
+      "ville": "Cusset"
+    }
+  },
+  {
+    "query": "boulevard ferdinand de lesesps 13014 marseille",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Boulevard Ferdinand de Lesseps",
+      "code_postal": "13014",
+      "ville": "Marseille 14e Arrondissement"
+    }
+  },
+  {
+    "query": "mai 1944 rue du 08230 27",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "Rue du 27 Mai 1944",
+      "code_postal": "08230",
+      "ville": "Bourg-Fidèle"
+    }
+  },
+  {
+    "query": "chemin de la folletiere 14100 lisieux",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Chemin de la Folletière",
+      "code_postal": "14100",
+      "ville": "Lisieux"
+    }
+  },
+  {
+    "query": "montee du portail 07530 iallees d",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Montée du Portail",
+      "code_postal": "07530",
+      "ville": "Vallées-d'Antraigues-Asperjoc"
+    }
+  },
+  {
+    "query": "a moulin eau 11400 puginier au",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "Au Moulin A Eau",
+      "code_postal": "11400",
+      "ville": "Puginier"
+    }
+  },
+  {
+    "query": "chemin de chez guimbert 16360 condeon",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Chemin de Chez Guimbert",
+      "code_postal": "16360",
+      "ville": "Condéon"
+    }
+  },
+  {
+    "query": "chemin des martins 07270 paint basile",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Chemin des Martins",
+      "code_postal": "07270",
+      "ville": "Saint-Basile"
+    }
+  },
+  {
+    "query": "route de 16360 la chantillac gare",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "Route de la Gare",
+      "code_postal": "16360",
+      "ville": "Chantillac"
+    }
+  },
+  {
+    "query": "route de liefontaine 14380 noues de",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Route de Liéfontaine",
+      "code_postal": "14380",
+      "ville": "Noues de Sienne"
+    }
+  },
+  {
+    "query": "place de la mairie 08110 inay",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Place de la Mairie",
+      "code_postal": "08110",
+      "ville": "Linay"
+    }
+  },
+  {
+    "query": "quinssaines impasse de 03380 croix la",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "impasse de la croix",
+      "code_postal": "03380",
+      "ville": "Quinssaines"
+    }
+  },
+  {
+    "query": "rue de la carriero de guillem",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Rue de la Carriero de Guillem",
+      "code_postal": "09400",
+      "ville": "Gourbit"
+    }
+  },
+  {
+    "query": "chemin sur venire 0r300 saint germain",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Chemin sur Venire",
+      "code_postal": "01300",
+      "ville": "Saint-Germain-les-Paroisses"
+    }
+  },
+  {
+    "query": "rue camille saint 13230 port pelletan",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "Rue Camille Pelletan",
+      "code_postal": "13230",
+      "ville": "Port-Saint-Louis-du-Rhône"
+    }
+  },
+  {
+    "query": "rue des lionnes 08250 olizy primat",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Rue des Lionnes",
+      "code_postal": "08250",
+      "ville": "Olizy-Primat"
+    }
+  },
+  {
+    "query": "route des bervonnes 01390 saint marcel",
+    "kind": "typo",
+    "words": 6,
+    "target": {
+      "voie": "Route des Brévonnes",
+      "code_postal": "01390",
+      "ville": "Saint-Marcel"
+    }
+  },
+  {
+    "query": "chemin la 14130 plate de pierre",
+    "kind": "shuffle",
+    "words": 6,
+    "target": {
+      "voie": "Chemin de la Pierre Plate",
+      "code_postal": "14130",
+      "ville": "Saint-Hymer"
+    }
+  },
+  {
+    "query": "rue sous le plan 01160 pont",
+    "kind": "prefix",
+    "words": 6,
+    "target": {
+      "voie": "Rue sous le Plan",
+      "code_postal": "01160",
+      "ville": "Pont-d'Ain"
+    }
+  },
+  {
+    "query": "chemin de la coste 12270 bor et",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Chemin de la Coste",
+      "code_postal": "12270",
+      "ville": "Bor-et-Bar"
+    }
+  },
+  {
+    "query": "residence de la riviere 141u4 ver sur",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Résidence de la Rivière",
+      "code_postal": "14114",
+      "ville": "Ver-sur-Mer"
+    }
+  },
+  {
+    "query": "les andre 10120 agenor saint rue cortier",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Rue Agénor Cortier",
+      "code_postal": "10120",
+      "ville": "Saint-André-les-Vergers"
+    }
+  },
+  {
+    "query": "rue du chateau 08130 alland huy et",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Rue du Château",
+      "code_postal": "08130",
+      "ville": "Alland'Huy-et-Sausseuil"
+    }
+  },
+  {
+    "query": "rue du chatau 02360 morgny en thierache",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Rue du Château",
+      "code_postal": "02360",
+      "ville": "Morgny-en-Thiérache"
+    }
+  },
+  {
+    "query": "07220 ferme de chemin de la bayle",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Chemin de la Ferme de Bayle",
+      "code_postal": "07220",
+      "ville": "Saint-Montan"
+    }
+  },
+  {
+    "query": "rue du 14 juillet 13300 salon de",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Rue du 14 Juillet",
+      "code_postal": "13300",
+      "ville": "Salon-de-Provence"
+    }
+  },
+  {
+    "query": "ruele de l ecu 02270 crecy sur",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Ruelle de l'Ecu",
+      "code_postal": "02270",
+      "ville": "Crécy-sur-Serre"
+    }
+  },
+  {
+    "query": "ruelle la le de gendarmerie 02170 nouvion",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Ruelle de la Gendarmerie",
+      "code_postal": "02170",
+      "ville": "Le Nouvion-en-Thiérache"
+    }
+  },
+  {
+    "query": "route de saint martin de crau 13890",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Route de Saint Martin de Crau",
+      "code_postal": "13890",
+      "ville": "Mouriès"
+    }
+  },
+  {
+    "query": "le grand rollier 03230 garnat sur egievre",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "le Grand Rollier",
+      "code_postal": "03230",
+      "ville": "Garnat-sur-Engièvre"
+    }
+  },
+  {
+    "query": "les annonay boulieu rue des 07100 consuls",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Rue des Consuls",
+      "code_postal": "07100",
+      "ville": "Boulieu-lès-Annonay"
+    }
+  },
+  {
+    "query": "place du bourg 03130 saint didier en",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Place du Bourg",
+      "code_postal": "03130",
+      "ville": "Saint-Didier-en-Donjon"
+    }
+  },
+  {
+    "query": "rue jaymond birer 10100 romilly sur seine",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Rue Raymond Birer",
+      "code_postal": "10100",
+      "ville": "Romilly-sur-Seine"
+    }
+  },
+  {
+    "query": "de plante belle ebreon la rue 16140",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Rue de la Belle Plante",
+      "code_postal": "16140",
+      "ville": "Ébréon"
+    }
+  },
+  {
+    "query": "chemin des godots 10120 saint andre les",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Chemin des Godots",
+      "code_postal": "10120",
+      "ville": "Saint-André-les-Vergers"
+    }
+  },
+  {
+    "query": "rue de la montagne 02290 montigny lfngrain",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Rue de la Montagne",
+      "code_postal": "02290",
+      "ville": "Montigny-Lengrain"
+    }
+  },
+  {
+    "query": "14260 impasse basse la seulline de lande",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Impasse de la Lande Basse",
+      "code_postal": "14260",
+      "ville": "Seulline"
+    }
+  },
+  {
+    "query": "chemin de la bourgade 12700 capdenac gare",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Chemin de la Bourgade",
+      "code_postal": "12700",
+      "ville": "Capdenac-Gare"
+    }
+  },
+  {
+    "query": "chemin de borubon 04120 la palud sur",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Chemin de Bourbon",
+      "code_postal": "04120",
+      "ville": "La Palud-sur-Verdon"
+    }
+  },
+  {
+    "query": "saint lager champesteve bressac 07210 de route",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Route de Champesteve",
+      "code_postal": "07210",
+      "ville": "Saint-Lager-Bressac"
+    }
+  },
+  {
+    "query": "rue de sylvacane 13300 salon de provence",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Rue de Sylvacane",
+      "code_postal": "13300",
+      "ville": "Salon-de-Provence"
+    }
+  },
+  {
+    "query": "rue porte de vile 03360 ainay le",
+    "kind": "typo",
+    "words": 7,
+    "target": {
+      "voie": "Rue Porte de Ville",
+      "code_postal": "03360",
+      "ville": "Ainay-le-Château"
+    }
+  },
+  {
+    "query": "du 04200 chaux a four rue peipin",
+    "kind": "shuffle",
+    "words": 7,
+    "target": {
+      "voie": "Rue du Four à Chaux",
+      "code_postal": "04200",
+      "ville": "Peipin"
+    }
+  },
+  {
+    "query": "impasse 56e pin de luquet (a nommer)",
+    "kind": "prefix",
+    "words": 7,
+    "target": {
+      "voie": "Impasse 56E pin de luquet (à nommer)",
+      "code_postal": "13710",
+      "ville": "Fuveau"
+    }
+  },
+  {
+    "query": "chemin de la chapelle 07270 colombier le jeune",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Chemin de la Chapelle",
+      "code_postal": "07270",
+      "ville": "Colombier-le-Jeune"
+    }
+  },
+  {
+    "query": "rue de al fosse aux chevaux 08260 eteignieres",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Rue de la Fosse aux Chevaux",
+      "code_postal": "08260",
+      "ville": "Éteignières"
+    }
+  },
+  {
+    "query": "de la du 03430 clef allee champ villefranche",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Allée du Champ de la Clef",
+      "code_postal": "03430",
+      "ville": "Villefranche-d'Allier"
+    }
+  },
+  {
+    "query": "route des taburles lieu dit les boissets 05230",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Route des Taburles Lieu dit Les Boissets",
+      "code_postal": "05230",
+      "ville": "Avançon"
+    }
+  },
+  {
+    "query": "montee du pierrou 07310 saint julien d intres",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "montée du pierrou",
+      "code_postal": "07310",
+      "ville": "Saint-Julien-d'Intres"
+    }
+  },
+  {
+    "query": "allee du isle 16340 chateau l d espagnac",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Allée du Château",
+      "code_postal": "16340",
+      "ville": "L'Isle-d'Espagnac"
+    }
+  },
+  {
+    "query": "rue de la commune de paris 13130 berre",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Rue de la Commune de Paris",
+      "code_postal": "13130",
+      "ville": "Berre-l'Étang"
+    }
+  },
+  {
+    "query": "impasse de la carronniere 0131q saint martin le",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Impasse de la Carronnière",
+      "code_postal": "01310",
+      "ville": "Saint-Martin-le-Châtel"
+    }
+  },
+  {
+    "query": "villers 02130 sur de du rue sac cul",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Rue du Cul de Sac",
+      "code_postal": "02130",
+      "ville": "Villers-sur-Fère"
+    }
+  },
+  {
+    "query": "impasse la meillerode 03300 saint etienne de vicq",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Impasse La Meillerode",
+      "code_postal": "03300",
+      "ville": "Saint-Étienne-de-Vicq"
+    }
+  },
+  {
+    "query": "chemin de la slele 07150 vallon pont d",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Chemin de la Selle",
+      "code_postal": "07150",
+      "ville": "Vallon-Pont-d'Arc"
+    }
+  },
+  {
+    "query": "capitaine du bosquet saint rue aigle pierre 02600",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Rue du Capitaine Bosquet",
+      "code_postal": "02600",
+      "ville": "Saint-Pierre-Aigle"
+    }
+  },
+  {
+    "query": "route de la sablonniere 14350 souleuvre en bocage",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Route de la Sablonnière",
+      "code_postal": "14350",
+      "ville": "Souleuvre en Bocage"
+    }
+  },
+  {
+    "query": "route u moulin du ranc 07240 vernoux en",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Route du Moulin du Ranc",
+      "code_postal": "07240",
+      "ville": "Vernoux-en-Vivarais"
+    }
+  },
+  {
+    "query": "sur nogent avenue 10400 seine perier casimir jean",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Avenue Jean-Casimir Périer",
+      "code_postal": "10400",
+      "ville": "Nogent-sur-Seine"
+    }
+  },
+  {
+    "query": "rue de la tourpiniere 14260 les monts d",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Rue de la Tourpinière",
+      "code_postal": "14260",
+      "ville": "Les Monts d'Aunay"
+    }
+  },
+  {
+    "query": "chemin de lestrade 07200 saint etienne de boulognk",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Chemin de Lestrade",
+      "code_postal": "07200",
+      "ville": "Saint-Étienne-de-Boulogne"
+    }
+  },
+  {
+    "query": "andre saint 14320 du orne poirier delle sur",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Delle du Poirier",
+      "code_postal": "14320",
+      "ville": "Saint-André-sur-Orne"
+    }
+  },
+  {
+    "query": "rue du pre du faure 05120 saint martin",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Rue du Pré du Faure",
+      "code_postal": "05120",
+      "ville": "Saint-Martin-de-Queyrières"
+    }
+  },
+  {
+    "query": "rue des chaniters de jeunesse 12310 laissac severac",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Rue des Chantiers de Jeunesse",
+      "code_postal": "12310",
+      "ville": "Laissac-Sévérac l'Église"
+    }
+  },
+  {
+    "query": "chemin de saint 09100 du jean falga monie",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Chemin de Monié",
+      "code_postal": "09100",
+      "ville": "Saint-Jean-du-Falga"
+    }
+  },
+  {
+    "query": "rue de la loire 10130 chessy les pres",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Rue de la Loire",
+      "code_postal": "10130",
+      "ville": "Chessy-les-Prés"
+    }
+  },
+  {
+    "query": "route de turgon 01160 saint martin dw mont",
+    "kind": "typo",
+    "words": 8,
+    "target": {
+      "voie": "Route de Turgon",
+      "code_postal": "01160",
+      "ville": "Saint-Martin-du-Mont"
+    }
+  },
+  {
+    "query": "l chemin 06330 de boules aire de roquefort",
+    "kind": "shuffle",
+    "words": 8,
+    "target": {
+      "voie": "Chemin de l'Aire de Boules",
+      "code_postal": "06330",
+      "ville": "Roquefort-les-Pins"
+    }
+  },
+  {
+    "query": "rue pierre et marie curie 10140 vendeuvre sur",
+    "kind": "prefix",
+    "words": 8,
+    "target": {
+      "voie": "Rue Pierre et Marie Curie",
+      "code_postal": "10140",
+      "ville": "Vendeuvre-sur-Barse"
+    }
+  },
+  {
+    "query": "impasse du moulin des forges v (a nommer) 13710",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Impasse du Moulin des Forges V (A NOMMER)",
+      "code_postal": "13710",
+      "ville": "Fuveau"
+    }
+  },
+  {
+    "query": "place de la mirie 09100 la tour du crieu",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Place de la Mairie",
+      "code_postal": "09100",
+      "ville": "La Tour-du-Crieu"
+    }
+  },
+  {
+    "query": "saint capou chemin gras de de 09500 domici julien",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Chemin de Domici",
+      "code_postal": "09500",
+      "ville": "Saint-Julien-de-Gras-Capou"
+    }
+  },
+  {
+    "query": "le roube 12130 saint geniez d olt et d",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Le Roube",
+      "code_postal": "12130",
+      "ville": "Saint Geniez d'Olt et d'Aubrac"
+    }
+  },
+  {
+    "query": "chemin du chateau de la chlade 13090 aix en",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Chemin du Château de la Calade",
+      "code_postal": "13090",
+      "ville": "Aix-en-Provence"
+    }
+  },
+  {
+    "query": "allier 8 du mai 1945 d avenue 03430 villefranche",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Avenue du 8 Mai 1945",
+      "code_postal": "03430",
+      "ville": "Villefranche-d'Allier"
+    }
+  },
+  {
+    "query": "rue grande rue (viapres le gr) 10380 plancy l",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Rue Grande Rue (viapres le Gr)",
+      "code_postal": "10380",
+      "ville": "Plancy-l'Abbaye"
+    }
+  },
+  {
+    "query": "route de cenne monesties, le vigne haut 1310 villemagne",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Route de Cenne Monesties, Le Vigne Haut",
+      "code_postal": "11310",
+      "ville": "Villemagne"
+    }
+  },
+  {
+    "query": "puy sainte en reparade aix provence du route 13540",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Route du Puy-Sainte-Réparade",
+      "code_postal": "13540",
+      "ville": "Aix-en-Provence"
+    }
+  },
+  {
+    "query": "rue du grain d orge 03140 saint germain de",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Rue du Grain d'Orge",
+      "code_postal": "03140",
+      "ville": "Saint-Germain-de-Salles"
+    }
+  },
+  {
+    "query": "impasse du 4 ajut 1944 14210 amaye sur orne",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Impasse du 4 Août 1944",
+      "code_postal": "14210",
+      "ville": "Amayé-sur-Orne"
+    }
+  },
+  {
+    "query": "place route de la la 14350 queue de souleuvre",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Route de la Queue de la Place",
+      "code_postal": "14350",
+      "ville": "Souleuvre en Bocage"
+    }
+  },
+  {
+    "query": "rue de l esperance 14370 mery bissieres en auge",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Rue de l'Espérance",
+      "code_postal": "14370",
+      "ville": "Méry-Bissières-en-Auge"
+    }
+  },
+  {
+    "query": "chemin de la ferme 07130 saint romain de lerp",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Chemin de la Ferme",
+      "code_postal": "07130",
+      "ville": "Saint-Romain-de-Lerps"
+    }
+  },
+  {
+    "query": "rue barbezieux chateau 16300 eau hilaire saint du d",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Rue du Château d'Eau",
+      "code_postal": "16300",
+      "ville": "Barbezieux-Saint-Hilaire"
+    }
+  },
+  {
+    "query": "route des bords de l ain 01250 hautecourt romaneche",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Route des Bords de l'Ain",
+      "code_postal": "01250",
+      "ville": "Hautecourt-Romanèche"
+    }
+  },
+  {
+    "query": "rue de la voie u bois 10110 celles sur",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Rue de la Voie du Bois",
+      "code_postal": "10110",
+      "ville": "Celles-sur-Ource"
+    }
+  },
+  {
+    "query": "saint auche de de vincent l 07360 route durfort",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Route de l'Auche",
+      "code_postal": "07360",
+      "ville": "Saint-Vincent-de-Durfort"
+    }
+  },
+  {
+    "query": "chemin de la scierie 01190 saint etienne sur reyssouze",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Chemin de la Scierie",
+      "code_postal": "01190",
+      "ville": "Saint-Étienne-sur-Reyssouze"
+    }
+  },
+  {
+    "query": "rue jean de la fogtaine 02210 rocourt saint martin",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Rue Jean de la Fontaine",
+      "code_postal": "02210",
+      "ville": "Rocourt-Saint-Martin"
+    }
+  },
+  {
+    "query": "des a 01000 denis chambiere rippes la saint chemin",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Chemin des Rippes à la Chambière",
+      "code_postal": "01000",
+      "ville": "Saint-Denis-lès-Bourg"
+    }
+  },
+  {
+    "query": "rue jo trehard 14280 saint germain la blanche herbe",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Rue Jo Tréhard",
+      "code_postal": "14280",
+      "ville": "Saint-Germain-la-Blanche-Herbe"
+    }
+  },
+  {
+    "query": "ue de la demoiselle 08240 landres et saint georges",
+    "kind": "typo",
+    "words": 9,
+    "target": {
+      "voie": "Rue de la Demoiselle",
+      "code_postal": "08240",
+      "ville": "Landres-et-Saint-Georges"
+    }
+  },
+  {
+    "query": "la rue michaille en 01200 chapelle chatillon valserhone de",
+    "kind": "shuffle",
+    "words": 9,
+    "target": {
+      "voie": "Rue de la Chapelle chatillon en michaille",
+      "code_postal": "01200",
+      "ville": "Valserhône"
+    }
+  },
+  {
+    "query": "chemin de l abattoir le mesnil auzouf 14260 dialan",
+    "kind": "prefix",
+    "words": 9,
+    "target": {
+      "voie": "Chemin de l'Abattoir - Le Mesnil-Auzouf",
+      "code_postal": "14260",
+      "ville": "Dialan sur Chaîne"
+    }
+  }
+]

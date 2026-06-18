@@ -1,0 +1,19 @@
+[project]
+name = "bano-search-bench"
+version = "0.1.0"
+description = "Benchmark de methodes de recherche/autocompletion offline BANO"
+requires-python = ">=3.10"
+dependencies = [
+  "pyarrow",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv]
+# Projet orienté scripts: pas de packaging/build.
