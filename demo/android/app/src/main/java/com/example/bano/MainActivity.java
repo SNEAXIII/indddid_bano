@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText field;
     private Runnable pending;
 
+    private boolean searching;
+    private String queued;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,25 +112,48 @@ public class MainActivity extends AppCompatActivity {
         if (rust == null || java == null) {
             return;
         }
+        if (searching) {
+            // Une recherche est déjà en vol : on ne lance rien, on garde la plus récente.
+            queued = query;
+            return;
+        }
+        searching = true;
+        dispatchSearch(query);
+    }
+
+    /** Exécute une recherche hors UI thread puis enchaîne sur la requête en attente. */
+    private void dispatchSearch(String query) {
         boolean wantJava = useJava;
         String engineName = wantJava ? "Java" : "Rust";
         executor.submit(() -> {
             long t0 = System.nanoTime();
-            List<Result> hits;
+            List<Result> hits = null;
+            boolean abandoned = false;
             try {
                 hits = wantJava
                         ? java.search(query, 10, t0 + JAVA_DEADLINE_NS)
                         : rust.search(query, 10);
             } catch (PureIndex.TimeoutException | OutOfMemoryError e) {
-                ui.post(() -> status.setText("Java a abandonné (trop lent/mémoire) — requête plus précise"));
-                return;
+                abandoned = true;
             }
             double ms = (System.nanoTime() - t0) / 1_000_000.0;
             List<Result> finalHits = hits;
+            boolean finalAbandoned = abandoned;
             ui.post(() -> {
-                adapter.submit(finalHits);
-                status.setText(String.format("%s — %d résultat(s) — %.2f ms",
-                        engineName, finalHits.size(), ms));
+                if (finalAbandoned) {
+                    status.setText(engineName + " a abandonné (trop lent/mémoire) — requête plus précise");
+                } else {
+                    adapter.submit(finalHits);
+                    status.setText(String.format("%s — %d résultat(s) — %.2f ms",
+                            engineName, finalHits.size(), ms));
+                }
+                // Recherche terminée : on enchaîne sur la dernière requête en attente.
+                searching = false;
+                if (queued != null) {
+                    String next = queued;
+                    queued = null;
+                    runSearch(next);
+                }
             });
         });
     }
