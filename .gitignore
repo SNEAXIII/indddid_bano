@@ -59,6 +59,9 @@ bench/*/reports/
 postings.bin
 records.bin
 
+# ===================== Config locale dev =====================
+Makefile.local
+
 # ===================== Logs / IDE / OS =====================
 *.log
 .idea/

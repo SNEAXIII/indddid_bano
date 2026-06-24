@@ -1,0 +1,11 @@
+# Copier ce fichier en Makefile.local et adapter les chemins à votre machine.
+# Makefile.local n'est pas committé (voir .gitignore).
+
+# Linux (Android Studio installé dans ~/Desktop/)
+# GRADLE_JDK = $(HOME)/Desktop/android-studio/jbr
+
+# macOS
+# GRADLE_JDK = /Applications/Android Studio.app/Contents/jbr
+
+# Windows (Git bash)
+# GRADLE_JDK = $(HOME)/AppData/Local/Google/AndroidStudio/jbr
