@@ -53,7 +53,7 @@ ifeq ($(OS),Windows_NT)
 else
   EXE :=
 endif
-GRADLE_JDK ?= C:/Program Files/Android/Android Studio1/jbr
+-include Makefile.local
 GRADLEW     = cd demo/android && JAVA_HOME="$(GRADLE_JDK)" ./gradlew
 
 .DEFAULT_GOAL := help

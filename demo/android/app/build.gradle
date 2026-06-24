@@ -9,7 +9,7 @@ plugins {
 cargo {
     module   = "../../rust/bano-fst"   // relatif a app/
     libname  = "bano_fst"
-    targets  = ["arm64", "x86_64"]
+    targets  = ["arm", "arm64", "x86_64"]
     profile  = "release"
     apiLevel = 30                       // = minSdk (Android 11)
     // Active la feature JNI du crate (le pont jni_bridge.rs).
@@ -97,7 +97,7 @@ android {
 
         // On n'embarque QUE les ABIs pour lesquelles on compile la lib Rust.
         ndk {
-            abiFilters 'arm64-v8a', 'x86_64'
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
         }
     }
 
