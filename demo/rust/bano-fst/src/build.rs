@@ -35,7 +35,7 @@ use crate::normalize::tokenize;
 /// Le type de retour `Result<(), Box<dyn std::error::Error>>` signifie :
 /// "soit ça réussit et on ne renvoie rien d'utile `()`, soit ça échoue avec
 /// une erreur d'un type quelconque". L'opérateur `?` propage ces erreurs.
-pub fn build(csv_path: &str, out_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn build(csv_path: &Path, out_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     // On s'assure que le dossier de sortie existe.
     std::fs::create_dir_all(out_dir)?;
 
@@ -222,7 +222,7 @@ mod tests {
         )
         .unwrap();
 
-        build(csv.to_str().unwrap(), dir.to_str().unwrap()).unwrap();
+        build(&csv, &dir).unwrap();
 
         let mut bytes = Vec::new();
         File::open(dir.join("vocab.bin"))

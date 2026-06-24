@@ -54,8 +54,7 @@ pub struct Index {
 
 impl Index {
     /// Ouvre l'artefact (dossier contenant index.fst / postings.bin / records.bin).
-    pub fn open(dir: &str) -> Result<Index, Box<dyn Error>> {
-        let dir = Path::new(dir);
+    pub fn open(dir: &Path) -> Result<Index, Box<dyn Error>> {
         Ok(Index {
             fst_mmap: map_file(dir.join("index.fst"))?,
             postings_mmap: map_file(dir.join("postings.bin"))?,
