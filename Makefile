@@ -125,6 +125,19 @@ android-install: ## Installe l'APK debug sur l'appareil connecté
 android-clean: ## Nettoie le build Gradle
 	$(GRADLEW) clean
 
+# ----- banorust (:banorust) : app Rust-only, comparaison séquentiel vs parallèle -----
+banorust-so: ## Compile bano_fst.so pour banorust (:banorust:cargoBuild)
+	$(GRADLEW) :banorust:cargoBuild
+
+banorust-index: ## Construit l'index FST dans les assets de banorust
+	$(GRADLEW) :banorust:generateBanoIndex
+
+banorust-debug: ## Build l'APK debug de banorust (cargo + index + assemble)
+	$(GRADLEW) :banorust:assembleDebug
+
+banorust-install: ## Installe l'APK debug de banorust sur l'appareil connecté
+	$(GRADLEW) :banorust:installDebug
+
 # ===================== Animation (demo/animations, via Manim) ===============
 # Manim vit dans son propre projet uv (demo/animations/pyproject.toml) : le
 # 1er `uv run manim` crée/synchronise .venv tout seul, puis réutilise l'env
@@ -274,6 +287,7 @@ clean: ## Supprime artefacts/rapports générés (bench v1/v2)
         sample-index sample-search sample-demo \
         sample-debug sample-search-debug sample-index-debug \
         android-so android-index android-debug android-install android-clean \
+        banorust-so banorust-index banorust-debug banorust-install \
         anim anim-one anim-preview \
         anim-workflow anim-workflow-montage anim-workflow-par \
         anim-present anim-present-pptx anim-present-serve \

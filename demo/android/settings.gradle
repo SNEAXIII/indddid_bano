@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "bano-android"
 include ':app'
+include ':banorust'   // app Rust-only : comparaison séquentiel vs parallèle

@@ -1,0 +1,117 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.rust.android)
+}
+
+// ===================== Brique Rust (bano-fst) =====================
+// Démo 2 : app 100 % Rust (PAS de moteur Java). Réutilise la MÊME crate que
+// :app ; le plugin rust-android la compile en .so et alimente les jniLibs.
+cargo {
+    module   = "../../rust/bano-fst"   // relatif a app2/
+    libname  = "bano_fst"
+    targets  = ["arm", "arm64", "x86_64"]
+    profile  = "release"
+    apiLevel = 30                       // = minSdk (Android 11)
+    extraCargoBuildArguments = ['--features', 'jni']
+}
+
+tasks.matching { it.name.startsWith('cargoBuild') }.configureEach {
+    notCompatibleWithConfigurationCache("CargoBuildTask uses Task.project at execution time")
+}
+
+// ===================== Chaine data + index FST =====================
+// Identique a :app, mais SANS le prébuild Lucene ni les requêtes de bench
+// (la démo 2 n'utilise que le moteur Rust).
+def repoRoot   = rootDir.parentFile.parentFile    // demo/android/ -> demo/ -> repo
+def dataDir    = new File(repoRoot, "data")
+def streetsCsv = new File(dataDir, "streets.csv")
+def crateDir   = file("../../rust/bano-fst")
+def indexDir   = file("src/main/assets/index")
+
+tasks.register('prepareData', Exec) {
+    description = "Telecharge le BANO et extrait data/streets.csv (skip si present)."
+    outputs.file streetsCsv
+    workingDir new File(repoRoot, "dataprep")
+    commandLine 'uv', 'run', 'python', '-m', 'dataprep', '--out', streetsCsv.absolutePath
+}
+
+tasks.register('generateBanoIndex', Exec) {
+    description = "Construit l'index FST dans assets/index/ (skip si inchange)."
+    dependsOn 'prepareData'
+    inputs.file streetsCsv
+    inputs.dir new File(crateDir, "src")
+    outputs.dir indexDir
+    commandLine 'cargo', 'run', '--release',
+            '--manifest-path', new File(crateDir, "Cargo.toml").absolutePath,
+            '--', 'build', streetsCsv.absolutePath, indexDir.absolutePath
+}
+
+// Jeu de requêtes labellisé pour le benchmark on-device (seq vs parallèle).
+def benchQueriesSrc = new File(repoRoot, "bench/v2/shared/queries.json")
+def benchAssetsDir  = file("src/main/assets/bench")
+
+tasks.register('copyBenchQueries', Copy) {
+    description = "Copie le jeu de requêtes labellisé dans assets/bench/."
+    from benchQueriesSrc
+    into benchAssetsDir
+}
+
+// L'index doit exister avant le merge des assets ; la .so avant le merge jniLibs.
+afterEvaluate {
+    tasks.named('preBuild').configure { it.dependsOn('generateBanoIndex', 'copyBenchQueries') }
+    tasks.matching { it.name ==~ /merge.*JniLibFolders/ }.configureEach {
+        it.dependsOn('cargoBuild')
+    }
+}
+
+android {
+    // namespace = celui des classes Java -> les symboles JNI
+    // Java_com_example_bano_BanoFst_* du crate restent valides.
+    namespace 'com.example.bano'
+    compileSdk 34
+    ndkVersion '27.0.12077973'
+
+    defaultConfig {
+        // applicationId distinct : s'installe À CÔTÉ de :app.
+        applicationId 'com.example.banorust'
+        minSdk 30
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
+    }
+
+    def ksPath = System.getenv('BANO_KEYSTORE') ?: project.findProperty('bano.keystore')
+    signingConfigs {
+        release {
+            if (ksPath) {
+                storeFile     file(ksPath)
+                storePassword System.getenv('BANO_KEYSTORE_PASSWORD') ?: project.findProperty('bano.keystore.password')
+                keyAlias      System.getenv('BANO_KEY_ALIAS')          ?: project.findProperty('bano.key.alias')
+                keyPassword   System.getenv('BANO_KEY_PASSWORD')       ?: project.findProperty('bano.key.password')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (ksPath) signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation platform(libs.kotlin.bom)
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
+}

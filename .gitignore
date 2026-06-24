@@ -43,6 +43,10 @@ demo/android/app/src/main/jniLibs/
 demo/android/app/src/main/assets/index/
 # queries.json copié dans les assets par la tâche gradle copyBenchQueries (régénérable)
 demo/android/app/src/main/assets/bench/
+# Idem pour l'app :banorust (Rust-only)
+demo/android/banorust/src/main/jniLibs/
+demo/android/banorust/src/main/assets/index/
+demo/android/banorust/src/main/assets/bench/
 
 # ===================== Bench (artefacts régénérables) =====================
 # On GARDE bench/v2/shared/queries.json (jeu de requêtes reproductible).
@@ -58,6 +62,7 @@ bench/*/reports/
 *.fst
 postings.bin
 records.bin
+vocab.bin
 
 # ===================== Config locale dev =====================
 Makefile.local
