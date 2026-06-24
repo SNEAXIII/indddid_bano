@@ -13,6 +13,7 @@ use std::path::Path;
 use fst::automaton::{Automaton, Levenshtein, Str};
 use fst::{IntoStreamer, Map, Streamer};
 use memmap2::Mmap;
+use rayon::prelude::*;
 
 use crate::normalize::tokenize;
 
@@ -64,37 +65,55 @@ impl Index {
     }
 
     /// Recherche floue + préfixe, sémantique ET, renvoie les `limit` meilleurs.
+    /// Variante **parallèle** : les parcours FST par jeton tournent sur rayon.
     pub fn search(&self, query: &str, limit: usize) -> Result<Vec<Hit>, Box<dyn Error>> {
+        self.search_impl(query, limit, true)
+    }
+
+    pub fn search_seq(&self, query: &str, limit: usize) -> Result<Vec<Hit>, Box<dyn Error>> {
+        self.search_impl(query, limit, false)
+    }
+
+    fn search_impl(
+        &self,
+        query: &str,
+        limit: usize,
+        parallel: bool,
+    ) -> Result<Vec<Hit>, Box<dyn Error>> {
         let map = Map::new(&self.fst_mmap)?;
         let postings: &[u8] = &self.postings_mmap;
         let records: &[u8] = &self.records_mmap;
 
         let qtokens = tokenize(query);
-        dbgln!("[DEBUG] query={:?} -> tokens={:?}", query, qtokens); // DEBUG
+        dbgln!("[DEBUG] query={:?} -> tokens={:?} parallel={}", query, qtokens, parallel); // DEBUG
         if qtokens.is_empty() {
             dbgln!("[DEBUG] aucun token -> 0 resultat"); // DEBUG
             return Ok(Vec::new());
         }
 
-        let mut per_token_maps: Vec<HashMap<u32, f32>> = Vec::with_capacity(qtokens.len());
-        for qtok in &qtokens {
-            let mut scores: HashMap<u32, f32> = HashMap::new();
+        let one = |qtok: &String| -> HashMap<u32, f32> {
             let d = if qtok.chars().count() <= 4 { 1 } else { 2 };
             dbgln!("[DEBUG] token={:?} distance_levenshtein_max={}", qtok, d); // DEBUG
-            match Levenshtein::new(qtok, d) {
+            let scores = match Levenshtein::new(qtok, d) {
                 Ok(lev) => {
                     let pref = Str::new(qtok).starts_with();
                     let aut = lev.union(pref);
-                    collect(&map, aut, qtok, postings, &mut scores);
+                    collect(&map, aut, qtok, postings)
                 }
                 Err(_) => {
                     let aut = Str::new(qtok).starts_with();
-                    collect(&map, aut, qtok, postings, &mut scores);
+                    collect(&map, aut, qtok, postings)
                 }
-            }
+            };
             dbgln!("[DEBUG]   token={:?} -> {} records distincts touches", qtok, scores.len()); // DEBUG
-            per_token_maps.push(scores);
-        }
+            scores
+        };
+
+        let per_token_maps: Vec<HashMap<u32, f32>> = if parallel {
+            qtokens.par_iter().map(&one).collect()
+        } else {
+            qtokens.iter().map(&one).collect()
+        };
 
         // Intersection (ET) en additionnant les poids.
         let mut acc: HashMap<u32, f32> = per_token_maps[0].clone();
@@ -224,8 +243,8 @@ fn collect<A: Automaton>(
     aut: A,
     qtok: &str,
     postings: &[u8],
-    scores: &mut HashMap<u32, f32>,
-) {
+) -> HashMap<u32, f32> {
+    let mut scores: HashMap<u32, f32> = HashMap::new();
     let mut stream = map.search(&aut).into_stream();
     while let Some((kbytes, packed)) = stream.next() {
         let matched = match std::str::from_utf8(kbytes) {
@@ -244,6 +263,7 @@ fn collect<A: Automaton>(
             }
         }
     }
+    return scores;
 }
 
 #[cfg(test)]

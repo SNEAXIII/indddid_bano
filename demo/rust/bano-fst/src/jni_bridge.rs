@@ -32,14 +32,38 @@ pub extern "system" fn Java_com_example_bano_BanoFst_nativeOpen(
     }
 }
 
-/// Recherche. Renvoie une chaîne JSON `[{score,voie,cp,ville}, ...]`.
+/// Recherche **parallèle** (rayon). Renvoie un JSON `[{score,voie,cp,ville}, ...]`.
 #[no_mangle]
 pub extern "system" fn Java_com_example_bano_BanoFst_nativeSearch(
-    mut env: JNIEnv,
+    env: JNIEnv,
     _class: JClass,
     handle: jlong,
     query: JString,
     limit: jint,
+) -> jstring {
+    native_search_impl(env, handle, query, limit, true)
+}
+
+/// Recherche **séquentielle** (un seul thread). Même résultat que `nativeSearch`,
+/// utilisée par la démo de comparaison séquentiel vs parallèle.
+#[no_mangle]
+pub extern "system" fn Java_com_example_bano_BanoFst_nativeSearchSeq(
+    env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    query: JString,
+    limit: jint,
+) -> jstring {
+    native_search_impl(env, handle, query, limit, false)
+}
+
+/// Logique commune aux deux recherches : `parallel` choisit le moteur.
+fn native_search_impl(
+    mut env: JNIEnv,
+    handle: jlong,
+    query: JString,
+    limit: jint,
+    parallel: bool,
 ) -> jstring {
     if handle == 0 {
         return std::ptr::null_mut();
@@ -53,7 +77,13 @@ pub extern "system" fn Java_com_example_bano_BanoFst_nativeSearch(
         Err(_) => String::new(),
     };
 
-    let hits = index.search(&query, limit.max(0) as usize).unwrap_or_default();
+    let limit = limit.max(0) as usize;
+    let hits = if parallel {
+        index.search(&query, limit)
+    } else {
+        index.search_seq(&query, limit)
+    }
+    .unwrap_or_default();
     let json = hits_to_json(&hits);
 
     match env.new_string(json) {
