@@ -53,7 +53,7 @@ jobs:
       - name: Rust + cibles Android
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android,x86_64-linux-android
+          targets: armv7-linux-androideabi,aarch64-linux-android,x86_64-linux-android
 
       - name: Cache cargo (crate bano-fst)
         uses: Swatinem/rust-cache@v2
