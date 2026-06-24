@@ -20,10 +20,59 @@ permissions:
 
 jobs:
   # ===================================================================
+  # Job 0 — Détection des chemins modifiés (gate des builds en aval)
+  # ===================================================================
+  # On ne reconstruit l'APK / les vidéos que si des fichiers de LEUR périmètre
+  # ont bougé. Pattern « detect change » : un `git diff --name-only` par
+  # périmètre -> sorties true/false consommées via `needs.changes.outputs.*`.
+  # Plage de diff selon l'évènement :
+  #   - pull_request : base de la PR ... HEAD
+  #   - push (tip connu) : avant ... après
+  #   - 1er push d'une branche / workflow_dispatch : pas de base fiable -> on
+  #     reconstruit TOUT (fail-safe : mieux vaut un build de trop qu'un manqué).
+  changes:
+    name: Détecter les chemins modifiés
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.filter.outputs.android }}
+      videos: ${{ steps.filter.outputs.videos }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Calculer la plage de diff
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "range=${{ github.event.pull_request.base.sha }}...HEAD" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "push" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            echo "range=${{ github.event.before }}...${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "range=" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Filtrer par périmètre
+        id: filter
+        run: |
+          RANGE="${{ steps.range.outputs.range }}"
+          if [ -z "$RANGE" ]; then
+            echo "android=true" >> "$GITHUB_OUTPUT"
+            echo "videos=true"  >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # APK : moteur Rust/JNI, app Android, dataprep (prepareData), le CI lui-même.
+          ANDROID=$(git diff --name-only "$RANGE" -- demo/rust demo/android dataprep .github/workflows/ci.yml | wc -l)
+          # Vidéos : sources Manim, le Makefile (cible anim-*), le CI lui-même.
+          VIDEOS=$(git diff --name-only "$RANGE" -- demo/animations Makefile .github/workflows/ci.yml | wc -l)
+          echo "android=$([ "$ANDROID" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "videos=$([ "$VIDEOS" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+  # ===================================================================
   # Job 1 — Build de l'application Android (APK debug)
   # ===================================================================
   android:
     name: Build APK Android
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
     runs-on: ubuntu-latest
     # BANO complet : download + extraction + index France entière puis build.
     timeout-minutes: 60
@@ -124,6 +173,8 @@ jobs:
   # ===================================================================
   videos:
     name: Rendu vidéos workflow
+    needs: changes
+    if: needs.changes.outputs.videos == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -196,8 +247,16 @@ jobs:
   # ===================================================================
   deploy:
     name: Déployer la Release (latest)
-    needs: [android, videos]            # attend que l'APK ET les vidéos soient publiés
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [android, videos]            # APK et/ou vidéos selon ce qui a été reconstruit
+    # `always()` : sans ça, un `needs` SAUTÉ (job filtré par `changes`) sauterait
+    # aussi deploy. On déploie sur push main si AUCUN des deux n'a échoué et qu'AU
+    # MOINS un a tourné (success). Si l'un est sauté, son ancien asset reste dans
+    # la release `latest` (action-gh-release ne supprime pas les assets non listés).
+    if: >-
+      always() &&
+      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      needs.android.result != 'failure' && needs.videos.result != 'failure' &&
+      (needs.android.result == 'success' || needs.videos.result == 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: write                   # requis : créer/mettre à jour la Release + déplacer le tag
@@ -217,7 +276,9 @@ jobs:
           tag_name: latest
           name: Latest (main)
           prerelease: false
-          fail_on_unmatched_files: true
+          # false : un job sauté = pas d'artefact. On tolère le glob vide et on
+          # garde l'asset précédent (action-gh-release ne supprime pas l'existant).
+          fail_on_unmatched_files: false
           files: |
             dist/app-apk/**/*.apk
             dist/videos/workflow_montage.mp4
