@@ -236,20 +236,34 @@ mod tests {
         let blob_start = packed_start + n * 8;
 
         let map = fst::Map::new(std::fs::read(dir.join("index.fst")).unwrap()).unwrap();
-        assert_eq!(map.len(), n, "vocab et fst doivent avoir le meme nombre de jetons");
+        assert_eq!(
+            map.len(),
+            n,
+            "vocab et fst doivent avoir le meme nombre de jetons"
+        );
 
         for i in 0..n {
             let o = u32::from_le_bytes(
-                bytes[off_start + i * 4..off_start + i * 4 + 4].try_into().unwrap(),
+                bytes[off_start + i * 4..off_start + i * 4 + 4]
+                    .try_into()
+                    .unwrap(),
             ) as usize;
             let o2 = u32::from_le_bytes(
-                bytes[off_start + (i + 1) * 4..off_start + (i + 1) * 4 + 4].try_into().unwrap(),
+                bytes[off_start + (i + 1) * 4..off_start + (i + 1) * 4 + 4]
+                    .try_into()
+                    .unwrap(),
             ) as usize;
             let tok = std::str::from_utf8(&bytes[blob_start + o..blob_start + o2]).unwrap();
             let packed = u64::from_le_bytes(
-                bytes[packed_start + i * 8..packed_start + i * 8 + 8].try_into().unwrap(),
+                bytes[packed_start + i * 8..packed_start + i * 8 + 8]
+                    .try_into()
+                    .unwrap(),
             );
-            assert_eq!(map.get(tok.as_bytes()), Some(packed), "packed du jeton {tok}");
+            assert_eq!(
+                map.get(tok.as_bytes()),
+                Some(packed),
+                "packed du jeton {tok}"
+            );
         }
     }
 }

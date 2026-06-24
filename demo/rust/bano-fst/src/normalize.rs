@@ -1,6 +1,6 @@
 //! Module de NORMALISATION du texte.
 //!
-//! Pourquoi normaliser ? 
+//! Pourquoi normaliser ?
 //! Pour rendre la recherche insensible aux accents ET à la casse
 //! Par exemple "BESANCON", "Besançon" et "besancon" sont tous normalisés en "besancon".
 
@@ -8,7 +8,7 @@
 use unicode_normalization::UnicodeNormalization;
 
 /// Normalise une chaîne : minuscules, sans accents, espaces propres.
-/// 
+///
 /// 1. tout en minuscules ;
 /// 2. les apostrophes `'` puis `"` et les tirets `-` deviennent des espaces ;
 /// 3. on retire les accents
@@ -20,7 +20,13 @@ pub fn normalize(s: &str) -> String {
     // --- Étape 2 : remplacer ', " et - par des espaces ---
     let replaced: String = lowered
         .chars()
-        .map(|c| if matches!(c, '\'' | '"' | '-') { ' ' } else { c })
+        .map(|c| {
+            if matches!(c, '\'' | '"' | '-') {
+                ' '
+            } else {
+                c
+            }
+        })
         .collect();
 
     // --- Étape 3 : retirer les accents ---
