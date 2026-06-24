@@ -54,8 +54,7 @@ pub struct Index {
 
 impl Index {
     /// Ouvre l'artefact (dossier contenant index.fst / postings.bin / records.bin).
-    pub fn open(dir: &str) -> Result<Index, Box<dyn Error>> {
-        let dir = Path::new(dir);
+    pub fn open(dir: &Path) -> Result<Index, Box<dyn Error>> {
         Ok(Index {
             fst_mmap: map_file(dir.join("index.fst"))?,
             postings_mmap: map_file(dir.join("postings.bin"))?,
@@ -92,7 +91,11 @@ impl Index {
                     collect(&map, aut, qtok, postings, &mut scores);
                 }
             }
-            dbgln!("[DEBUG]   token={:?} -> {} records distincts touches", qtok, scores.len()); // DEBUG
+            dbgln!(
+                "[DEBUG]   token={:?} -> {} records distincts touches",
+                qtok,
+                scores.len()
+            ); // DEBUG
             per_token_maps.push(scores);
         }
 
@@ -116,7 +119,11 @@ impl Index {
                 .then(a.0.cmp(&b.0))
         });
         candidates.truncate(limit);
-        dbgln!("[DEBUG] top {} apres tri/troncature: {:?}", limit, candidates); // DEBUG
+        dbgln!(
+            "[DEBUG] top {} apres tri/troncature: {:?}",
+            limit,
+            candidates
+        ); // DEBUG
 
         // Décodage records.bin : [u32 n][ (n+1) u32 offsets ][ blob ].
         let n = read_u32(records, 0) as usize;
@@ -140,7 +147,8 @@ impl Index {
         }
         dbgln!("[DEBUG] {} hits decodes:", hits.len()); // DEBUG
         for h in &hits {
-            dbgln!("[DEBUG]   {:.3}  {} {} {}", h.score, h.voie, h.cp, h.ville); // DEBUG
+            dbgln!("[DEBUG]   {:.3}  {} {} {}", h.score, h.voie, h.cp, h.ville);
+            // DEBUG
         }
         Ok(hits)
     }
@@ -235,7 +243,13 @@ fn collect<A: Automaton>(
         let offset = (packed >> 32) as usize;
         let len = (packed & 0xFFFF_FFFF) as usize;
         let w = similarity(qtok, matched);
-        dbgln!("[DEBUG]     fst match {:?}~{:?} poids={:.3} postings={}", qtok, matched, w, len); // DEBUG
+        dbgln!(
+            "[DEBUG]     fst match {:?}~{:?} poids={:.3} postings={}",
+            qtok,
+            matched,
+            w,
+            len
+        ); // DEBUG
         for k in 0..len {
             let rid = read_u32(postings, (offset + k) * 4);
             let entry = scores.entry(rid).or_insert(0.0);

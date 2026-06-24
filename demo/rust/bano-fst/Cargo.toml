@@ -16,7 +16,8 @@ fst = { version = "0.4", features = ["levenshtein"] }
 memmap2 = "0.9"
 csv = "1"
 unicode-normalization = "0.1"
-jni = { version = "0.21", optional = true }
+jni = { version = "0.22", optional = true }
+clap = { version = "4.6.1", features = ["derive"] }
 
 [features]
 jni = ["dep:jni"]

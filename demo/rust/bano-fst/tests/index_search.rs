@@ -21,9 +21,9 @@ fn build_open_search_trouve_la_cible() {
     .unwrap();
 
     let index_dir = base.join("index");
-    build(csv_path.to_str().unwrap(), index_dir.to_str().unwrap()).unwrap();
+    build(&csv_path, &index_dir).unwrap();
 
-    let index = Index::open(index_dir.to_str().unwrap()).unwrap();
+    let index = Index::open(&index_dir).unwrap();
 
     // Faute de frappe + multi-mots : doit retrouver Bourg-en-Bresse.
     let hits = index.search("bourg bress", 5).unwrap();

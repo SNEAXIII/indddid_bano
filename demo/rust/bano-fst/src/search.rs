@@ -3,11 +3,12 @@
 //! recherche vit désormais dans la lib `bano_fst::index`.
 
 use std::error::Error;
+use std::path::Path;
 use std::time::Instant;
 
 use bano_fst::index::Index;
 
-pub fn search(artifact_dir: &str, query: &str, limit: usize) -> Result<(), Box<dyn Error>> {
+pub fn search(artifact_dir: &Path, query: &str, limit: usize) -> Result<(), Box<dyn Error>> {
     let index = Index::open(artifact_dir)?;
 
     let start = Instant::now();

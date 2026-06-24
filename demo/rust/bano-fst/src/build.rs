@@ -35,7 +35,7 @@ use crate::normalize::tokenize;
 /// Le type de retour `Result<(), Box<dyn std::error::Error>>` signifie :
 /// "soit ça réussit et on ne renvoie rien d'utile `()`, soit ça échoue avec
 /// une erreur d'un type quelconque". L'opérateur `?` propage ces erreurs.
-pub fn build(csv_path: &str, out_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn build(csv_path: &Path, out_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     // On s'assure que le dossier de sortie existe.
     std::fs::create_dir_all(out_dir)?;
 
@@ -222,7 +222,7 @@ mod tests {
         )
         .unwrap();
 
-        build(csv.to_str().unwrap(), dir.to_str().unwrap()).unwrap();
+        build(&csv, &dir).unwrap();
 
         let mut bytes = Vec::new();
         File::open(dir.join("vocab.bin"))
@@ -236,20 +236,34 @@ mod tests {
         let blob_start = packed_start + n * 8;
 
         let map = fst::Map::new(std::fs::read(dir.join("index.fst")).unwrap()).unwrap();
-        assert_eq!(map.len(), n, "vocab et fst doivent avoir le meme nombre de jetons");
+        assert_eq!(
+            map.len(),
+            n,
+            "vocab et fst doivent avoir le meme nombre de jetons"
+        );
 
         for i in 0..n {
             let o = u32::from_le_bytes(
-                bytes[off_start + i * 4..off_start + i * 4 + 4].try_into().unwrap(),
+                bytes[off_start + i * 4..off_start + i * 4 + 4]
+                    .try_into()
+                    .unwrap(),
             ) as usize;
             let o2 = u32::from_le_bytes(
-                bytes[off_start + (i + 1) * 4..off_start + (i + 1) * 4 + 4].try_into().unwrap(),
+                bytes[off_start + (i + 1) * 4..off_start + (i + 1) * 4 + 4]
+                    .try_into()
+                    .unwrap(),
             ) as usize;
             let tok = std::str::from_utf8(&bytes[blob_start + o..blob_start + o2]).unwrap();
             let packed = u64::from_le_bytes(
-                bytes[packed_start + i * 8..packed_start + i * 8 + 8].try_into().unwrap(),
+                bytes[packed_start + i * 8..packed_start + i * 8 + 8]
+                    .try_into()
+                    .unwrap(),
             );
-            assert_eq!(map.get(tok.as_bytes()), Some(packed), "packed du jeton {tok}");
+            assert_eq!(
+                map.get(tok.as_bytes()),
+                Some(packed),
+                "packed du jeton {tok}"
+            );
         }
     }
 }

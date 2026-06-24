@@ -53,7 +53,9 @@ pub extern "system" fn Java_com_example_bano_BanoFst_nativeSearch(
         Err(_) => String::new(),
     };
 
-    let hits = index.search(&query, limit.max(0) as usize).unwrap_or_default();
+    let hits = index
+        .search(&query, limit.max(0) as usize)
+        .unwrap_or_default();
     let json = hits_to_json(&hits);
 
     match env.new_string(json) {
