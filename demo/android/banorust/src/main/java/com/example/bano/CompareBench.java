@@ -75,11 +75,13 @@ public final class CompareBench {
     public Outcome run(int limit, int warmup, Progress progress) throws Exception {
         List<String> queries = loadQueries();
         int w0 = Math.min(warmup, queries.size());
-        int total = w0 + queries.size();
+        int nq = queries.size();
+        // warmup + une passe complète par moteur (mesure en 2 temps).
+        int total = w0 + 2 * nq;
 
         BanoFst rust = new BanoFst(indexDir);
         try {
-            // Warmup : on chauffe les DEUX moteurs (JIT, pool rayon, caches).
+            // Warmup : on chauffe les DEUX moteurs (JIT, pool rayon, pages mmap).
             for (int i = 0; i < w0; i++) {
                 String q = queries.get(i);
                 rust.search(q, limit);
@@ -87,37 +89,43 @@ public final class CompareBench {
                 tick(progress, i + 1, total, "warmup");
             }
 
-            List<Double> par = new ArrayList<>(queries.size());
-            List<Double> seq = new ArrayList<>(queries.size());
-            // Latences ventilées par nombre de mots de la requête (clé triée).
-            Map<Integer, List<Double>> parByWc = new TreeMap<>();
-            Map<Integer, List<Double>> seqByWc = new TreeMap<>();
-            int mismatches = 0, done = 0;
+            int done = 0;
 
+            // PASSE 1 : toutes les requêtes sur le moteur PARALLÈLE.
+            // On mémorise les résultats pour vérifier la parité en passe 2.
+            List<Double> par = new ArrayList<>(nq);
+            Map<Integer, List<Double>> parByWc = new TreeMap<>();
+            List<List<Result>> parHits = new ArrayList<>(nq);
             for (String q : queries) {
                 long a = System.nanoTime();
                 List<Result> ph = rust.search(q, limit);
-                double pms = (System.nanoTime() - a) / 1e6;
+                double ms = (System.nanoTime() - a) / 1e6;
+                par.add(ms);
+                bucket(parByWc, wordCount(q)).add(ms);
+                parHits.add(ph);
+                tick(progress, w0 + (++done), total, "mesure ∥");
+            }
 
-                long b = System.nanoTime();
+            // PASSE 2 : toutes les requêtes sur le moteur SÉQUENTIEL.
+            List<Double> seq = new ArrayList<>(nq);
+            Map<Integer, List<Double>> seqByWc = new TreeMap<>();
+            int mismatches = 0, qi = 0;
+            for (String q : queries) {
+                long a = System.nanoTime();
                 List<Result> sh = rust.searchSeq(q, limit);
-                double sms = (System.nanoTime() - b) / 1e6;
-
-                par.add(pms);
-                seq.add(sms);
-                int wc = wordCount(q);
-                bucket(parByWc, wc).add(pms);
-                bucket(seqByWc, wc).add(sms);
-                if (!sameResults(ph, sh)) mismatches++;
-
-                tick(progress, w0 + (++done), total, "mesure");
+                double ms = (System.nanoTime() - a) / 1e6;
+                seq.add(ms);
+                bucket(seqByWc, wordCount(q)).add(ms);
+                if (!sameResults(parHits.get(qi), sh)) mismatches++;
+                qi++;
+                tick(progress, w0 + (++done), total, "mesure seq");
             }
 
             Outcome o = new Outcome();
             o.parallel = stat(par);
             o.seq = stat(seq);
             o.mismatches = mismatches;
-            o.nQueries = queries.size();
+            o.nQueries = nq;
             o.byWordCount = wordCountStats(parByWc, seqByWc);
             return o;
         } finally {
