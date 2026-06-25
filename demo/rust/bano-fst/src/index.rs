@@ -98,11 +98,11 @@ impl Index {
                 Ok(lev) => {
                     let pref = Str::new(qtok).starts_with();
                     let aut = lev.union(pref);
-                    collect(&map, aut, qtok, postings)
+                    collect(&map, aut, qtok, postings, parallel)
                 }
                 Err(_) => {
                     let aut = Str::new(qtok).starts_with();
-                    collect(&map, aut, qtok, postings)
+                    collect(&map, aut, qtok, postings, parallel)
                 }
             };
             dbgln!("[DEBUG]   token={:?} -> {} records distincts touches", qtok, scores.len()); // DEBUG
@@ -243,8 +243,10 @@ fn collect<A: Automaton>(
     aut: A,
     qtok: &str,
     postings: &[u8],
+    parallel: bool,
 ) -> HashMap<u32, f32> {
-    let mut scores: HashMap<u32, f32> = HashMap::new();
+    // 1) Drain séquentiel du stream FST : (offset_postings, len, poids).
+    let mut matches: Vec<(usize, usize, f32)> = Vec::new();
     let mut stream = map.search(&aut).into_stream();
     while let Some((kbytes, packed)) = stream.next() {
         let matched = match std::str::from_utf8(kbytes) {
@@ -255,15 +257,48 @@ fn collect<A: Automaton>(
         let len = (packed & 0xFFFF_FFFF) as usize;
         let w = similarity(qtok, matched);
         dbgln!("[DEBUG]     fst match {:?}~{:?} poids={:.3} postings={}", qtok, matched, w, len); // DEBUG
-        for k in 0..len {
-            let rid = read_u32(postings, (offset + k) * 4);
-            let entry = scores.entry(rid).or_insert(0.0);
-            if w > *entry {
-                *entry = w;
-            }
+        matches.push((offset, len, w));
+    }
+
+    // 2) Expansion des postings -> carte rid -> poids (max).
+    if parallel {
+        matches
+            .par_iter()
+            .fold(HashMap::new, |mut acc, &(offset, len, w)| {
+                expand(&mut acc, postings, offset, len, w);
+                acc
+            })
+            .reduce(HashMap::new, merge_max)
+    } else {
+        let mut scores: HashMap<u32, f32> = HashMap::new();
+        for &(offset, len, w) in &matches {
+            expand(&mut scores, postings, offset, len, w);
+        }
+        scores
+    }
+}
+
+/// Ajoute les `len` rid lus à partir de `offset` dans `scores`, poids `w` (max par rid).
+fn expand(scores: &mut HashMap<u32, f32>, postings: &[u8], offset: usize, len: usize, w: f32) {
+    for k in 0..len {
+        let rid = read_u32(postings, (offset + k) * 4);
+        let entry = scores.entry(rid).or_insert(0.0);
+        if w > *entry {
+            *entry = w;
         }
     }
-    return scores;
+}
+
+/// Fusionne deux cartes en gardant le poids max par rid (la petite dans la grande).
+fn merge_max(a: HashMap<u32, f32>, b: HashMap<u32, f32>) -> HashMap<u32, f32> {
+    let (mut big, small) = if a.len() >= b.len() { (a, b) } else { (b, a) };
+    for (rid, w) in small {
+        let entry = big.entry(rid).or_insert(0.0);
+        if w > *entry {
+            *entry = w;
+        }
+    }
+    big
 }
 
 #[cfg(test)]

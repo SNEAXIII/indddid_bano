@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Benchmark on-device des DEUX moteurs Rust : recherche parallèle (rayon) vs
@@ -25,12 +27,21 @@ public final class CompareBench {
         public int n;
     }
 
+    /** Latence p50/p99 des deux moteurs pour les requêtes de {@code words} mots. */
+    public static final class WcStat {
+        public int words;
+        public int n;
+        public double parP50, parP99, seqP50, seqP99;
+    }
+
     /** Résultat global : latences des deux moteurs + nb d'écarts de parité. */
     public static final class Outcome {
         public Stat parallel = new Stat();
         public Stat seq = new Stat();
         public int mismatches;   // requêtes où seq != parallèle (attendu : 0)
         public int nQueries;
+        /** Latence par nombre de mots de la requête, trié croissant. */
+        public List<WcStat> byWordCount = new ArrayList<>();
     }
 
     /** Rappel de progression : {@code done}/{@code total}, {@code phase} = libellé. */
@@ -78,6 +89,9 @@ public final class CompareBench {
 
             List<Double> par = new ArrayList<>(queries.size());
             List<Double> seq = new ArrayList<>(queries.size());
+            // Latences ventilées par nombre de mots de la requête (clé triée).
+            Map<Integer, List<Double>> parByWc = new TreeMap<>();
+            Map<Integer, List<Double>> seqByWc = new TreeMap<>();
             int mismatches = 0, done = 0;
 
             for (String q : queries) {
@@ -91,6 +105,9 @@ public final class CompareBench {
 
                 par.add(pms);
                 seq.add(sms);
+                int wc = wordCount(q);
+                bucket(parByWc, wc).add(pms);
+                bucket(seqByWc, wc).add(sms);
                 if (!sameResults(ph, sh)) mismatches++;
 
                 tick(progress, w0 + (++done), total, "mesure");
@@ -101,6 +118,7 @@ public final class CompareBench {
             o.seq = stat(seq);
             o.mismatches = mismatches;
             o.nQueries = queries.size();
+            o.byWordCount = wordCountStats(parByWc, seqByWc);
             return o;
         } finally {
             rust.close();
@@ -137,6 +155,43 @@ public final class CompareBench {
         int idx = (int) Math.ceil(p / 100.0 * s.size()) - 1;
         idx = Math.max(0, Math.min(s.size() - 1, idx));
         return s.get(idx);
+    }
+
+    /** Nombre de mots d'une requête (même règle que la v1 : split sur espaces). */
+    private static int wordCount(String query) {
+        if (query == null) return 0;
+        String t = query.trim();
+        return t.isEmpty() ? 0 : t.split("\\s+").length;
+    }
+
+    /** Liste de latences pour {@code wc} mots, créée à la demande. */
+    private static List<Double> bucket(Map<Integer, List<Double>> m, int wc) {
+        List<Double> l = m.get(wc);
+        if (l == null) {
+            l = new ArrayList<>();
+            m.put(wc, l);
+        }
+        return l;
+    }
+
+    /** Fusionne les deux ventilations en une liste triée (p50/p99 par moteur). */
+    private static List<WcStat> wordCountStats(Map<Integer, List<Double>> parByWc,
+                                               Map<Integer, List<Double>> seqByWc) {
+        List<WcStat> out = new ArrayList<>(parByWc.size());
+        for (Map.Entry<Integer, List<Double>> e : parByWc.entrySet()) {
+            int wc = e.getKey();
+            List<Double> p = e.getValue();
+            List<Double> s = seqByWc.get(wc);
+            WcStat w = new WcStat();
+            w.words = wc;
+            w.n = p.size();
+            w.parP50 = percentile(p, 50);
+            w.parP99 = percentile(p, 99);
+            w.seqP50 = percentile(s, 50);
+            w.seqP99 = percentile(s, 99);
+            out.add(w);
+        }
+        return out;
     }
 
     private static void tick(Progress p, int done, int total, String phase) {

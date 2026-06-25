@@ -141,6 +141,21 @@ public class BenchmarkActivity extends AppCompatActivity {
         note.setPadding(0, dp(8), 0, 0);
         note.setText("speedup = séquentiel ÷ parallèle (> 1× : le parallèle est plus rapide)");
         results.addView(note);
+
+        // Latence par nombre de mots (// = parallèle, seq = séquentiel).
+        results.addView(sectionTitle("Latence par nombre de mots"));
+        String[][] rows = new String[o.byWordCount.size()][];
+        for (int i = 0; i < o.byWordCount.size(); i++) {
+            CompareBench.WcStat w = o.byWordCount.get(i);
+            rows[i] = new String[]{
+                    String.valueOf(w.words), String.valueOf(w.n),
+                    n(w.parP50), n(w.parP99), n(w.seqP50), n(w.seqP99),
+                    x(w.seqP50, w.parP50),
+            };
+        }
+        results.addView(hScroll(table(
+                new String[]{"mots", "n", "// p50", "// p99", "seq p50", "seq p99", "speedup p50"},
+                rows, 1)));
     }
 
     // ---------------------------------------------------------------- vues (portées de :app)
